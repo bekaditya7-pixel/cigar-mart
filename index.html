@@ -54,6 +54,7 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <button id="tabBuku" onclick="showTab('buku')">PEMBUKUAN</button>
 <button id="tabKasbon" onclick="showTab('kasbon')">KASBON</button>
 <button id="tabStok" onclick="showTab('stok')">STOK</button>
+<button id="tabSaldo" onclick="showTab('saldo')">SALDO</button>
 </nav>
 
 <!-- JUAL -->
@@ -127,6 +128,62 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 </div>
 
+<!-- SALDO -->
+<div id="page-saldo" class="hidden">
+<div class="card" style="background:#111;color:#fff">
+<h3 style="color:#f5c518">💰 LAPORAN SALDO</h3>
+<div class="kpi">
+<div class="yellow"><small>Uang Cash (Tunai)</small><b id="saldoCash">Rp 0</b></div>
+<div><small>Uang QR / Transfer</small><b id="saldoQR">Rp 0</b></div>
+<div><small>Total Saldo (Cash + QR)</small><b id="saldoTotal">Rp 0</b></div>
+<div><small>Kasbon Belum Lunas</small><b id="saldoKasbon">Rp 0</b></div>
+</div>
+<p style="font-size:12px;color:#ccc">Rumus: Penjualan Tunai + Dana Masuk - Dana Keluar. QR = Penjualan Transfer + Dana Masuk QR - Dana Keluar QR.</p>
+</div>
+
+<div class="card">
+<h3>➕ Dana Masuk</h3>
+<label>Tanggal</label><input type="date" id="dmTgl">
+<label>Jumlah</label><input type="number" id="dmJumlah" placeholder="0">
+<label>Keterangan</label>
+<select id="dmKet" onchange="cekPinjam()">
+<option value="Uang modal">Uang modal</option>
+<option value="Pinjam dana dari...">Pinjam dana dari...</option>
+<option value="Kelebihan">Kelebihan</option>
+</select>
+<div id="boxPinjam" class="hidden"><label>Pinjam Dana Dari Siapa?</label><input type="text" id="dmPinjamDari" placeholder="Contoh: Pinjam dari Budi"></div>
+<label>Metode Masuk Ke</label><select id="dmMetode"><option value="Cash">Cash / Tunai</option><option value="QR">QR / Transfer</option></select>
+<label>Catatan</label><input type="text" id="dmCatatan" placeholder="Opsional">
+<button class="btn btn-green" onclick="simpanDanaMasuk()">💾 SIMPAN DANA MASUK</button>
+</div>
+
+<div class="card">
+<h3>➖ Dana Keluar</h3>
+<label>Tanggal</label><input type="date" id="dkTgl">
+<label>Jumlah</label><input type="number" id="dkJumlah" placeholder="0">
+<label>Keterangan</label>
+<select id="dkKet">
+<option value="Belanja stock">Belanja stock</option>
+<option value="Operasional">Operasional</option>
+<option value="Lain lain">Lain lain</option>
+<option value="Komisi">Komisi</option>
+</select>
+<label>Metode Keluar Dari</label><select id="dkMetode"><option value="Cash">Cash / Tunai</option><option value="QR">QR / Transfer</option></select>
+<label>Catatan</label><input type="text" id="dkCatatan" placeholder="Contoh: Beli rokok 5 slop">
+<button class="btn btn-red" onclick="simpanDanaKeluar()">💾 SIMPAN DANA KELUAR</button>
+</div>
+
+<div class="card">
+<h3>📋 Riwayat Dana Masuk & Keluar</h3>
+<div class="filter">
+<button class="active" id="btnDanaAll" onclick="filterDana('all')">Semua</button>
+<button id="btnDanaMasuk" onclick="filterDana('masuk')">Dana Masuk</button>
+<button id="btnDanaKeluar" onclick="filterDana('keluar')">Dana Keluar</button>
+</div>
+<div class="total-box" id="totalDanaBox">Memuat...</div>
+<div id="listDana"></div>
+</div>
+</div>  
   <script>
 // ===== DATA =====
 let sales = JSON.parse(localStorage.getItem('cm_sales')||'[]');
@@ -317,7 +374,63 @@ function renderKPI(){
   document.getElementById('kpiOmsetToday').textContent=rp(omsetToday);
   document.getElementById('kpiKasbonAll').textContent=rp(kasbonAll);
 }
-function renderAll(){renderProdukSelect();renderKPI();renderBuku();renderKasbon();renderStok();}
+function renderAll(){renderProdukSelect();renderKPI();renderBuku();renderKasbon();renderStok();renderSaldo();}
+// ===== SALDO & DANA =====
+let dana = JSON.parse(localStorage.getItem('cm_dana')||'[]');
+let filterDanaMode='all';
+function saveDana(){localStorage.setItem('cm_dana',JSON.stringify(dana))}
+function cekPinjam(){document.getElementById('boxPinjam').classList.toggle('hidden', document.getElementById('dmKet').value!=='Pinjam dana dari...')}
+function simpanDanaMasuk(){
+  let j=Number(document.getElementById('dmJumlah').value||0); if(j<=0){alert('Isi jumlah dulu');return}
+  let ket=document.getElementById('dmKet').value;
+  if(ket==='Pinjam dana dari...'){let p=document.getElementById('dmPinjamDari').value.trim(); ket='Pinjam dana dari '+p}
+  dana.unshift({id:Date.now(),tipe:'masuk',tgl:document.getElementById('dmTgl').value||todayStr(),jumlah:j,ket,metode:document.getElementById('dmMetode').value,catatan:document.getElementById('dmCatatan').value||''});
+  saveDana(); document.getElementById('dmJumlah').value=''; document.getElementById('dmCatatan').value=''; renderAll(); alert('Dana Masuk tersimpan');
+}
+function simpanDanaKeluar(){
+  let j=Number(document.getElementById('dkJumlah').value||0); if(j<=0){alert('Isi jumlah dulu');return}
+  dana.unshift({id:Date.now(),tipe:'keluar',tgl:document.getElementById('dkTgl').value||todayStr(),jumlah:j,ket:document.getElementById('dkKet').value,metode:document.getElementById('dkMetode').value,catatan:document.getElementById('dkCatatan').value||''});
+  saveDana(); document.getElementById('dkJumlah').value=''; document.getElementById('dkCatatan').value=''; renderAll(); alert('Dana Keluar tersimpan');
+}
+function filterDana(m){filterDanaMode=m; renderSaldo();}
+function hapusDana(id){if(confirm('Hapus data dana ini?')){dana=dana.filter(x=>x.id!==id); saveDana(); renderAll();}}
+function renderSaldo(){
+  document.getElementById('dmTgl').value=todayStr(); document.getElementById('dkTgl').value=todayStr();
+  let tunaiJual=sales.filter(s=>s.bayar==='Tunai').reduce((a,s)=>a+s.total,0);
+  let qrJual=sales.filter(s=>s.bayar==='Transfer').reduce((a,s)=>a+s.total,0);
+  let masukCash=dana.filter(d=>d.tipe==='masuk'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0);
+  let masukQR=dana.filter(d=>d.tipe==='masuk'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0);
+  let keluarCash=dana.filter(d=>d.tipe==='keluar'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0);
+  let keluarQR=dana.filter(d=>d.tipe==='keluar'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0);
+  let saldoCash=tunaiJual+masukCash-keluarCash;
+  let saldoQR=qrJual+masukQR-keluarQR;
+  let kasbonBelum=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  document.getElementById('saldoCash').textContent=rp(saldoCash);
+  document.getElementById('saldoQR').textContent=rp(saldoQR);
+  document.getElementById('saldoTotal').textContent=rp(saldoCash+saldoQR);
+  document.getElementById('saldoKasbon').textContent=rp(kasbonBelum);
+  let list=dana; if(filterDanaMode!=='all') list=dana.filter(d=>d.tipe===filterDanaMode);
+  let totMasuk=dana.filter(d=>d.tipe==='masuk').reduce((a,d)=>a+d.jumlah,0);
+  let totKeluar=dana.filter(d=>d.tipe==='keluar').reduce((a,d)=>a+d.jumlah,0);
+  document.getElementById('totalDanaBox').innerHTML='Total Masuk: <span style="color:#27ae60">'+rp(totMasuk)+'</span> | Total Keluar: <span style="color:#c00">'+rp(totKeluar)+'</span> | Sisa Dana Masuk-Keluar: '+rp(totMasuk-totKeluar);
+  let html=list.length===0?'<p style="color:#888">Belum ada dana masuk/keluar.</p>':'';
+  list.forEach(d=>{
+    html+='<div class="item"><b>'+d.tgl+' - '+(d.tipe==='masuk'?'⬆️ MASUK':'⬇️ KELUAR')+'</b> <span class="badge '+(d.tipe==='masuk'?'badge-lunas':'badge-belum')+'">'+d.metode+'</span><br><small>'+d.ket+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:'+(d.tipe==='masuk'?'#27ae60':'#c00')+'">'+(d.tipe==='masuk'?'+ ':'- ')+rp(d.jumlah)+'</b><div class="actions"><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>';
+  });
+  document.getElementById('listDana').innerHTML=html;
+  document.getElementById('btnDanaAll').classList.toggle('active',filterDanaMode==='all');
+  document.getElementById('btnDanaMasuk').classList.toggle('active',filterDanaMode==='masuk');
+  document.getElementById('btnDanaKeluar').classList.toggle('active',filterDanaMode==='keluar');
+}
+// biar tab saldo kebuka
+let _oldShowTab=showTab;
+showTab=function(t){
+  ['jual','buku','kasbon','stok','saldo'].forEach(x=>{let el=document.getElementById('page-'+x); if(el) el.classList.add('hidden')});
+  let pg=document.getElementById('page-'+t); if(pg) pg.classList.remove('hidden');
+  ['tabJual','tabBuku','tabKasbon','tabStok','tabSaldo'].forEach(x=>{let el=document.getElementById(x); if(el) el.classList.remove('active')});
+  let tb={jual:'tabJual',buku:'tabBuku',kasbon:'tabKasbon',stok:'tabStok',saldo:'tabSaldo'}[t]; if(tb) document.getElementById(tb).classList.add('active');
+  renderAll();
+};
 renderAll();
 </script>
 </body>
