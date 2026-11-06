@@ -106,6 +106,7 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 
 <!-- KASBON -->
 <div id="page-kasbon" class="hidden">
+<button class="btn btn-green" onclick="bayarKasbonSebagianByNama()" style="margin-bottom:10px">💵 BAYAR SEBAGIAN KASBON (KLIK DI SINI)</button>  
 <div class="card">
 <h3>📒 Kasbon - Filter Per Nama</h3>
 <label>Cari / Pilih Nama</label>
@@ -431,6 +432,28 @@ showTab=function(t){
   let tb={jual:'tabJual',buku:'tabBuku',kasbon:'tabKasbon',stok:'tabStok',saldo:'tabSaldo'}[t]; if(tb) document.getElementById(tb).classList.add('active');
   renderAll();
 };
+// BAYAR SEBAGIAN KASBON - CARA NAMA
+function bayarKasbonSebagianByNama(){
+  let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Budi');
+  if(!nama) return;
+  let s=sales.filter(x=>x.bayar==='Kasbon'&&!x.lunas&&x.nama.toLowerCase().includes(nama.toLowerCase()));
+  if(s.length===0){alert('Gak ketemu kasbon atas nama '+nama+' yang belum lunas');return}
+  let pilih=s[0];
+  if(s.length>1){
+    let teks=s.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+((x.total-(x.dibayar||0)))+' - '+x.barang).join('\n');
+    let no=Number(prompt('Ada '+s.length+' kasbon '+nama+', pilih nomornya:\n'+teks,'1'));
+    if(!no||no<1||no>s.length) return;
+    pilih=s[no-1];
+  }
+  let sudah=pilih.dibayar||0; let sisa=pilih.total-sudah;
+  let bayar=Number(prompt('Kasbon '+pilih.nama+' - '+pilih.barang+'\nTotal: '+pilih.total+'\nSudah dibayar: '+sudah+'\nSisa: '+sisa+'\n\nMau bayar berapa sekarang?',''));
+  if(!bayar||bayar<=0) return;
+  if(bayar>sisa){alert('Kelebihan! Sisa cuma '+sisa);return}
+  pilih.dibayar=sudah+bayar;
+  if(pilih.dibayar>=pilih.total){pilih.lunas=true; alert('LUNAS! Kasbon '+pilih.nama+' lunas');}
+  else{alert('Tersimpan. Sisa kasbon '+pilih.nama+' tinggal '+(pilih.total-pilih.dibayar))}
+  saveSales(); renderAll();
+}    
 renderAll();
 </script>
 </body>
