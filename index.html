@@ -3,307 +3,322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cigar Mart - POS Kasir</title>
+<title>Cigar Mart - POS</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1a120b">
-<link rel="apple-touch-icon" href="icon.png">
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="theme-color" content="#111111">
 <style>
-.tab-page{display:none}
-.tab-page.active{display:block}
-.nav-btn{opacity:.5}
-.nav-btn.active{opacity:1;font-weight:800;color:#000}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f2f2f2;padding-bottom:80px}
+header{background:#111;color:#fff;padding:14px;text-align:center;position:sticky;top:0;z-index:10}
+header h1{margin:0;font-size:20px;letter-spacing:1px}
+header p{margin:2px 0 0;font-size:12px;color:#f5c518}
+nav{display:flex;background:#fff;position:sticky;top:58px;z-index:9;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+nav button{flex:1;padding:12px 4px;border:0;background:#fff;font-weight:bold;cursor:pointer;font-size:13px}
+nav button.active{background:#111;color:#fff}
+.card{background:#fff;margin:12px;border-radius:12px;padding:14px;box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.card h3{margin:0 0 10px;font-size:15px}
+label{font-size:12px;font-weight:bold;color:#555;display:block;margin-top:10px}
+input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.btn{width:100%;padding:12px;border:0;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:12px;font-size:15px}
+.btn-dark{background:#111;color:#fff}
+.btn-yellow{background:#f5c518;color:#111}
+.btn-red{background:#e74c3c;color:#fff}
+.btn-green{background:#27ae60;color:#fff}
+.btn-gray{background:#eee;color:#111}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi div{background:#111;color:#fff;padding:12px;border-radius:10px}
+.kpi div.yellow{background:#f5c518;color:#111}
+.kpi small{font-size:11px;opacity:.8}
+.kpi b{font-size:18px;display:block;margin-top:4px}
+.filter{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.filter button{padding:8px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;font-weight:bold}
+.filter button.active{background:#111;color:#fff}
+.item{border:1px solid #eee;border-radius:10px;padding:10px;margin-top:8px}
+.item b{font-size:14px}
+.item small{color:#777;font-size:12px}
+.actions{display:flex;gap:6px;margin-top:8px}
+.actions button{flex:1;padding:8px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px}
+.total-box{background:#fff3cd;border:1px solid #f5c518;padding:12px;border-radius:10px;margin-top:10px;font-weight:bold}
+.hidden{display:none}
+.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:bold}
+.badge-lunas{background:#d4edda;color:#155724}
+.badge-belum{background:#f8d7da;color:#721c24}
 </style>
 </head>
-<body class="bg-[#f6f1e8] pb-24 font-sans">
-<div class="bg-[#1a120b] text-white p-4 sticky top-0 z-20 flex justify-between items-center">
-  <div class="flex gap-3 items-center">
-    <div class="w-11 h-11 bg-amber-600 rounded-full flex items-center justify-center text-2xl">🚬</div>
-    <div><h1 class="font-bold text-lg leading-none">Cigar Mart</h1><p class="text-xs text-amber-300 mt-1">Premium Cigar • Asli • Terpercaya</p></div>
-  </div>
-  <button onclick="resetData()" class="text-xs bg-white/10 px-3 py-2 rounded-full">Reset</button>
-</div>
-<div class="p-3 max-w-xl mx-auto">
-  <div id="page-penjualan" class="tab-page active">
-    <div class="grid grid-cols-2 gap-3">
-      <div class="bg-emerald-600 text-white p-4 rounded-2xl"><p class="text-xs opacity-80">OMSET HARI INI</p><p id="omset" class="text-2xl font-bold mt-2">Rp 0</p><p id="jmlTransaksi" class="text-xs mt-1 opacity-80">0 transaksi</p></div>
-      <div class="bg-blue-600 text-white p-4 rounded-2xl"><p class="text-xs opacity-80">TOTAL TERJUAL</p><p id="totalJual" class="text-2xl font-bold mt-2">0 bungkus</p><p class="text-xs mt-1 opacity-80">Semua jenis cerutu</p></div>
-      <div class="bg-amber-500 text-white p-4 rounded-2xl"><p class="text-xs opacity-80">ESTIMASI UNTUNG</p><p id="untung" class="text-2xl font-bold mt-2">Rp 0</p><p class="text-xs mt-1 opacity-80">Laba kotor</p></div>
-      <div class="bg-rose-500 text-white p-4 rounded-2xl"><p class="text-xs opacity-80">KASBON HARI INI</p><p id="kasbonTotal" class="text-2xl font-bold mt-2">Rp 0</p><p class="text-xs mt-1 opacity-80">Hutang belum dibayar</p></div>
-    </div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm">
-      <h2 class="font-bold text-lg" id="judulJual">+ Catat Penjualan Baru</h2>
-      <p id="infoEdit" style="display:none" class="text-sm text-amber-600 font-bold">✏️ Lagi Edit Transaksi</p>
-      <label class="block text-xs font-bold mt-4 text-gray-600">TANGGAL TRANSAKSI</label>
-      <input id="tanggal" type="date" class="w-full border rounded-xl p-3 mt-1">
-      <label class="block text-xs font-bold mt-4 text-gray-600">NAMA PEMBELI</label>
-      <div class="flex gap-2 mt-1">
-        <button onclick="setTipe('Reguler')" id="btnReguler" class="px-3 py-1 rounded-full bg-black text-white text-sm">Reguler</button>
-        <button onclick="setTipe('Reseller')" id="btnReseller" class="px-3 py-1 rounded-full bg-gray-100 text-sm">🏷️ Reseller</button>
-      </div>
-      <input id="nama" placeholder="Contoh: Mas Budi (default: Umum)" class="w-full border rounded-xl p-3 mt-2">
-      <div class="flex gap-2 mt-2 flex-wrap">
-        <button onclick="isiNama('Umum')" class="bg-gray-100 px-3 py-1 rounded-full text-sm">Umum</button>
-        <button onclick="isiNama('Pak RT')" class="bg-gray-100 px-3 py-1 rounded-full text-sm">Pak RT</button>
-        <button onclick="isiNama('Mbak Fitri')" class="bg-gray-100 px-3 py-1 rounded-full text-sm">Mbak Fitri</button>
-        <button onclick="isiNama('Mas Budi')" class="bg-gray-100 px-3 py-1 rounded-full text-sm">Mas Budi</button>
-      </div>
-      <label class="block text-xs font-bold mt-5 text-gray-600">PILIH CERUTU</label>
-      <div id="listProduk" class="grid grid-cols-2 gap-2 mt-2"></div>
-      <label class="block text-xs font-bold mt-4 text-gray-600">METODE PEMBAYARAN</label>
-      <div class="grid grid-cols-3 gap-2 mt-1">
-        <button onclick="setBayar('Tunai')" id="bayarTunai" class="border-2 border-black py-2 rounded-xl font-bold text-sm">Tunai</button>
-        <button onclick="setBayar('Transfer')" id="bayarTransfer" class="border py-2 rounded-xl text-sm">Transfer / QR</button>
-        <button onclick="setBayar('Kasbon')" id="bayarKasbon" class="border py-2 rounded-xl text-sm">Kasbon</button>
-      </div>
-      <div class="flex justify-between items-center mt-4 bg-amber-50 p-3 rounded-xl"><span class="font-bold">Total:</span><span id="totalBayar" class="font-bold text-xl">Rp 0</span></div>
-      <button onclick="simpan()" id="btnSimpanJual" class="w-full bg-black text-white py-3 rounded-xl font-bold mt-3">SIMPAN PENJUALAN</button>
-      <button onclick="batalEditJual()" id="btnBatalJual" style="display:none" class="w-full bg-gray-100 py-2 rounded-xl text-sm mt-2">Batal Edit</button>
-    </div>
-  </div>
+<body>
+<header><h1>🚬 CIGAR MART</h1><p>POS • Pembukuan • Kasbon</p></header>
+<nav>
+<button id="tabJual" class="active" onclick="showTab('jual')">JUAL</button>
+<button id="tabBuku" onclick="showTab('buku')">PEMBUKUAN</button>
+<button id="tabKasbon" onclick="showTab('kasbon')">KASBON</button>
+<button id="tabStok" onclick="showTab('stok')">STOK</button>
+</nav>
 
-  <div id="page-stok" class="tab-page">
-    <div class="bg-white rounded-2xl p-4 shadow-sm"><h3 class="font-bold text-lg">📦 Stok Cerutu</h3><div id="listStok" class="mt-3 text-sm"></div></div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm">
-      <h3 class="font-bold">Kelola Barang</h3>
-      <input id="fNama" placeholder="Nama Barang" class="w-full border rounded-xl p-3 mt-3">
-      <div class="grid grid-cols-2 gap-2 mt-2"><input id="fHarga" type="number" placeholder="Harga Jual" class="border rounded-xl p-3"><input id="fModal" type="number" placeholder="Harga Modal" class="border rounded-xl p-3"></div>
-      <input id="fStok" type="number" placeholder="Stok" class="w-full border rounded-xl p-3 mt-2">
-      <input type="hidden" id="editIndex" value="-1">
-      <button onclick="simpanBarang()" id="btnSimpanBarang" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold mt-3">+ TAMBAH BARANG BARU</button>
-      <button onclick="batalEdit()" id="btnBatal" class="w-full bg-gray-100 py-2 rounded-xl text-sm mt-2 hidden">Batal Edit</button>
-      <div id="listKelola" class="mt-3 text-sm"></div>
-    </div>
-  </div>
-
-  <div id="page-pembukuan" class="tab-page">
-    <div class="grid grid-cols-3 gap-2">
-      <div class="bg-emerald-600 text-white p-3 rounded-2xl text-center"><p class="text-[11px] opacity-80">CASH</p><p id="totalCash" class="font-bold">Rp 0</p><p id="countCash" class="text-[11px] opacity-80">0x</p></div>
-      <div class="bg-blue-600 text-white p-3 rounded-2xl text-center"><p class="text-[11px] opacity-80">QR / TRANSFER</p><p id="totalTransfer" class="font-bold">Rp 0</p><p id="countTransfer" class="text-[11px] opacity-80">0x</p></div>
-      <div class="bg-rose-500 text-white p-3 rounded-2xl text-center"><p class="text-[11px] opacity-80">KASBON</p><p id="totalKasbonBuku" class="font-bold">Rp 0</p><p id="countKasbonBuku" class="text-[11px] opacity-80">0x</p></div>
-    </div>
-    <div id="boxPinjam" class="bg-amber-100 border-2 border-amber-400 rounded-2xl p-4 mt-4" style="display:none">
-      <h3 class="font-bold text-amber-800">⚠️ PENGINGAT PINJAMAN</h3>
-      <p id="totalPinjam" class="text-sm text-amber-800 mt-1"></p>
-      <div id="listPinjam" class="mt-2 text-sm"></div>
-    </div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm">
-      <h3 class="font-bold text-lg">📒 Pembukuan - Riwayat Hari Ini</h3>
-      <div id="riwayat" class="mt-3 text-sm"></div>
-    </div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm">
-      <h3 class="font-bold text-lg">💰 Dana Masuk / Keluar Manual</h3>
-      <p class="text-xs text-gray-400">Kalau tulis "pinjam" di keterangan, otomatis masuk pengingat di atas.</p>
-      <div class="grid grid-cols-2 gap-2 mt-3">
-        <div class="bg-emerald-50 p-3 rounded-xl text-center"><p class="text-xs text-emerald-700">TOTAL MASUK</p><p id="totalDanaMasuk" class="font-bold text-emerald-700">Rp 0</p></div>
-        <div class="bg-rose-50 p-3 rounded-xl text-center"><p class="text-xs text-rose-700">TOTAL KELUAR</p><p id="totalDanaKeluar" class="font-bold text-rose-700">Rp 0</p></div>
-      </div>
-      <div class="flex gap-2 mt-3">
-        <button onclick="setDanaTipe('masuk')" id="danaMasukBtn" class="flex-1 bg-emerald-600 text-white py-2 rounded-xl font-bold text-sm">⬆️ DANA MASUK</button>
-        <button onclick="setDanaTipe('keluar')" id="danaKeluarBtn" class="flex-1 bg-gray-100 py-2 rounded-xl text-sm">⬇️ DANA KELUAR</button>
-      </div>
-      <input id="danaNominal" type="number" placeholder="Nominal, cth: 500000" class="w-full border rounded-xl p-3 mt-3">
-      <input id="danaKeterangan" oninput="cekPinjam()" placeholder="Keterangan, cth: Pinjam dari Bos / Beli plastik" class="w-full border rounded-xl p-3 mt-2">
-      <div id="formPinjam" style="display:none" class="bg-amber-50 p-3 rounded-xl mt-2">
-        <p class="text-xs font-bold text-amber-700">📌 Kedeteksi PINJAM - isi ini ya Aa:</p>
-        <input id="danaDari" placeholder="Pinjam dari siapa? cth: Bos" class="w-full border rounded-xl p-3 mt-2">
-        <label class="block text-xs font-bold mt-2 text-gray-600">JATUH TEMPO</label>
-        <input id="danaJatuhTempo" type="date" class="w-full border rounded-xl p-3 mt-1">
-      </div>
-      <button onclick="simpanDana()" class="w-full bg-black text-white py-3 rounded-xl font-bold mt-3">SIMPAN DANA</button>
-      <div id="listDana" class="mt-3 text-sm"></div>
-    </div>
-  </div>
-
-  <div id="page-kasbon" class="tab-page">
-    <div class="bg-rose-500 text-white p-4 rounded-2xl"><p class="text-xs opacity-80">TOTAL SISA KASBON</p><p id="kasbonTotal2" class="text-2xl font-bold mt-1">Rp 0</p><p id="kasbonCount" class="text-xs mt-1 opacity-80">0 orang ngutang</p><p id="kasbonSudahBayar" class="text-xs opacity-80"></p></div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm"><h3 class="font-bold text-lg">⏰ Daftar Kasbon</h3><div id="listKasbon" class="mt-3"></div></div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm"><h3 class="font-bold">✅ Yang Udah Lunas</h3><div id="listLunas" class="mt-2 text-sm"></div></div>
-  </div>
-
-  <div id="page-laporan" class="tab-page">
-    <div class="bg-white rounded-2xl p-4 shadow-sm">
-      <h3 class="font-bold text-lg">📊 Laporan Hari Ini</h3>
-      <div id="laporanIsi" class="text-sm mt-3 space-y-2"></div>
-      <button onclick="shareWA()" class="w-full bg-green-500 text-white py-3 rounded-xl font-bold mt-4">💬 KIRIM LAPORAN KE WA</button>
-    </div>
-    <div class="bg-white rounded-2xl p-4 mt-4 shadow-sm"><h3 class="font-bold">Per Produk Terjual</h3><div id="laporanProduk" class="text-sm mt-2"></div></div>
-  </div>
+<!-- JUAL -->
+<div id="page-jual">
+<div class="card">
+<h3>🧾 Input Penjualan</h3>
+<label>Tanggal Transaksi</label>
+<input type="date" id="tgl">
+<label>Nama Pembeli <small>(isi untuk Kasbon)</small></label>
+<input type="text" id="nama" placeholder="Contoh: Budi / Umum">
+<label>Produk</label>
+<select id="produk"></select>
+<label>Harga / Bungkus</label>
+<input type="number" id="harga" placeholder="0">
+<div class="row"><div><label>Jumlah (Bungkus)</label><input type="number" id="qty" value="1" min="1"></div>
+<div><label>Metode Bayar</label><select id="bayar"><option value="Tunai">Tunai</option><option value="Kasbon">Kasbon</option><option value="Transfer">Transfer</option></select></div></div>
+<label>Catatan</label><input type="text" id="catatan" placeholder="Opsional">
+<div class="card" style="margin:12px 0 0;background:#f9f9f9"><b>Total: <span id="previewTotal">Rp 0</span></b> • <span id="previewUntung">Untung: Rp 0</span></div>
+<button class="btn btn-dark" id="btnSimpan" onclick="simpan()">💾 SIMPAN PENJUALAN</button>
+<button class="btn btn-gray hidden" id="btnBatalEdit" onclick="batalEdit()">Batal Edit</button>
 </div>
 
-<div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 text-xs z-30">
-  <button onclick="showTab('penjualan')" id="nav-penjualan" class="nav-btn active flex flex-col items-center py-1 px-2">🚬<span>Penjualan</span></button>
-  <button onclick="showTab('stok')" id="nav-stok" class="nav-btn flex flex-col items-center py-1 px-2">📦<span>Stok</span></button>
-  <button onclick="showTab('pembukuan')" id="nav-pembukuan" class="nav-btn flex flex-col items-center py-1 px-2">📒<span>Pembukuan</span></button>
-  <button onclick="showTab('kasbon')" id="nav-kasbon" class="nav-btn flex flex-col items-center py-1 px-2">⏰<span>Kasbon</span></button>
-  <button onclick="showTab('laporan')" id="nav-laporan" class="nav-btn flex flex-col items-center py-1 px-2">📊<span>Laporan</span></button>
+<div class="card" style="background:#111;color:#fff">
+<h3 style="color:#f5c518">📊 TOTAL SEMUA PENJUALAN (DARI AWAL)</h3>
+<div class="kpi">
+<div class="yellow"><small>Total Omset Semua</small><b id="kpiOmsetAll">Rp 0</b></div>
+<div><small>Total Untung Semua</small><b id="kpiUntungAll">Rp 0</b></div>
+<div><small>Total Transaksi</small><b id="kpiTrxAll">0</b></div>
+<div><small>Total Bungkus Terjual</small><b id="kpiBungkusAll">0</b></div>
 </div>
-<canvas id="canvasNota" width="480" height="640" style="display:none"></canvas>
-<script>
-let PRODUK_DEFAULT = [
-  {nama:"MARBOL Filterblack", harga:14000, modal:10000, stok:50},
-  {nama:"MARBOL Melon", harga:14000, modal:10000, stok:50},
-  {nama:"MARBOL Semangka", harga:14000, modal:10000, stok:50},
-  {nama:"MARBOL Blueberry", harga:14000, modal:10000, stok:50},
-  {nama:"ESTE Semangka", harga:15000, modal:11000, stok:50},
-  {nama:"ESTE Mango", harga:15000, modal:11000, stok:50},
-  {nama:"HUMER Merah New", harga:12000, modal:9000, stok:50},
-  {nama:"MARLLONG Dadali", harga:14000, modal:9500, stok:50},
-];
-let PRODUK = JSON.parse(localStorage.getItem("cigarmart_produk") || "null") || PRODUK_DEFAULT;
-function saveProduk(){ localStorage.setItem("cigarmart_produk", JSON.stringify(PRODUK)); }
-let keranjang = {};
-let tipe = "Reguler";
-let bayar = "Tunai";
-let data = JSON.parse(localStorage.getItem("cigarmart") || "[]");
-let editJualId = null;
-let danaList = JSON.parse(localStorage.getItem("cigarmart_dana") || "[]");
-let danaTipe = "masuk";
-document.getElementById("tanggal").valueAsDate = new Date();
-function cekPinjam(){
-  let v = document.getElementById("danaKeterangan").value.toLowerCase();
-  document.getElementById("formPinjam").style.display = (v.indexOf("pinjam")>=0 && danaTipe=="masuk") ? "block" : "none";
+<p style="font-size:12px;color:#ccc;margin:10px 0 0">Omset Hari Ini: <b id="kpiOmsetToday" style="color:#f5c518">Rp 0</b> • Kasbon Belum Lunas (Semua): <b id="kpiKasbonAll" style="color:#ff8a8a">Rp 0</b></p>
+</div>
+</div>
+
+<!-- PEMBUKUAN -->
+<div id="page-buku" class="hidden">
+<div class="card">
+<h3>📚 Pembukuan & Riwayat</h3>
+<div class="filter">
+<button id="fAll" class="active" onclick="setFilter('all')">Semua Tanggal</button>
+<button id="fToday" onclick="setFilter('today')">Hari Ini</button>
+<button onclick="setFilter('pick')">Pilih Tanggal</button>
+<input type="date" id="filterTgl" style="width:150px" onchange="setFilter('pick')">
+</div>
+<div class="total-box" id="rekapFilter">Memuat...</div>
+<div id="listRiwayat"></div>
+</div>
+</div>
+
+<!-- KASBON -->
+<div id="page-kasbon" class="hidden">
+<div class="card">
+<h3>📒 Kasbon - Filter Per Nama</h3>
+<label>Cari / Pilih Nama</label>
+<input type="text" id="cariNama" placeholder="Ketik nama... contoh: Budi" oninput="renderKasbon()">
+<select id="pilihNama" onchange="pilihNamaKasbon()"><option value="">-- Semua Nama --</option></select>
+<div class="total-box" id="totalKasbonNama">Pilih nama untuk lihat totalnya</div>
+<div id="listKasbon"></div>
+</div>
+</div>
+
+<!-- STOK -->
+<div id="page-stok" class="hidden">
+<div class="card">
+<h3>📦 Stok & Produk</h3>
+<label>Nama Produk Baru</label><input type="text" id="newNama" placeholder="Contoh: Gudang Garam Filter">
+<div class="row"><div><label>Harga Jual</label><input type="number" id="newHarga" placeholder="0"></div><div><label>Modal / Bungkus</label><input type="number" id="newModal" placeholder="0"></div></div>
+<label>Stok Awal</label><input type="number" id="newStok" placeholder="0">
+<button class="btn btn-yellow" onclick="tambahProduk()">+ TAMBAH PRODUK</button>
+<div id="listStok"></div>
+</div>
+</div>
+
+  <script>
+// ===== DATA =====
+let sales = JSON.parse(localStorage.getItem('cm_sales')||'[]');
+let products = JSON.parse(localStorage.getItem('cm_products')||'[]');
+if(products.length===0){
+  products=[
+    {nama:'Gudang Garam Filter',harga:26000,modal:22000,stok:50},
+    {nama:'Surya 12',harga:28000,modal:24000,stok:50},
+    {nama:'Djarum Super',harga:25000,modal:21000,stok:50},
+    {nama:'Sampoerna Mild',harga:33000,modal:29000,stok:30}
+  ]; saveProducts();
 }
-function showTab(nama){
-  document.querySelectorAll(".tab-page").forEach(function(el){el.classList.remove("active")});
-  document.querySelectorAll(".nav-btn").forEach(function(el){el.classList.remove("active")});
-  document.getElementById("page-"+nama).classList.add("active");
-  document.getElementById("nav-"+nama).classList.add("active");
-  window.scrollTo({top:0, behavior:"smooth"});
-  renderDash();
+let editId=null;
+let filterMode='all';
+function rp(n){return 'Rp '+(Number(n)||0).toLocaleString('id-ID')}
+function todayStr(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function saveSales(){localStorage.setItem('cm_sales',JSON.stringify(sales))}
+function saveProducts(){localStorage.setItem('cm_products',JSON.stringify(products))}
+document.getElementById('tgl').value=todayStr();
+document.getElementById('filterTgl').value=todayStr();
+
+// ===== TAB =====
+function showTab(t){
+  ['jual','buku','kasbon','stok'].forEach(x=>document.getElementById('page-'+x).classList.add('hidden'));
+  document.getElementById('page-'+t).classList.remove('hidden');
+  ['tabJual','tabBuku','tabKasbon','tabStok'].forEach(x=>document.getElementById(x).classList.remove('active'));
+  if(t==='jual')document.getElementById('tabJual').classList.add('active');
+  if(t==='buku')document.getElementById('tabBuku').classList.add('active');
+  if(t==='kasbon')document.getElementById('tabKasbon').classList.add('active');
+  if(t==='stok')document.getElementById('tabStok').classList.add('active');
+  renderAll();
 }
-function rupiah(n){ return "Rp " + (n||0).toLocaleString("id-ID"); }
-function isiNama(n){ document.getElementById("nama").value = n; }
-function setTipe(t){ tipe=t; document.getElementById("btnReguler").className = t=="Reguler" ? "px-3 py-1 rounded-full bg-black text-white text-sm" : "px-3 py-1 rounded-full bg-gray-100 text-sm"; document.getElementById("btnReseller").className = t=="Reseller" ? "px-3 py-1 rounded-full bg-black text-white text-sm" : "px-3 py-1 rounded-full bg-gray-100 text-sm"; }
-function setBayar(b){ bayar=b; ["Tunai","Transfer","Kasbon"].forEach(function(x){ document.getElementById("bayar"+x).className = x==b ? "border-2 border-black py-2 rounded-xl font-bold text-sm" : "border py-2 rounded-xl text-sm"; }); }
-function renderProduk(){
-  let html = "";
-  for(let i=0;i<PRODUK.length;i++){ let p=PRODUK[i]; html += '<div class="border rounded-xl p-3 '+(keranjang[i]?'border-black bg-amber-50':'')+'"><p class="font-bold">'+p.nama+'</p><p class="text-amber-700 font-bold">'+rupiah(p.harga)+'</p><p class="text-xs text-gray-500">Stok: '+(p.stok - terjual(i))+' bungkus</p><div class="flex items-center gap-2 mt-2"><button onclick="ubah('+i+',-1)" class="w-8 h-8 bg-gray-100 rounded-full font-bold">-</button><span class="font-bold">'+(keranjang[i]||0)+'</span><button onclick="ubah('+i+',1)" class="w-8 h-8 bg-black text-white rounded-full font-bold">+</button></div></div>'; }
-  document.getElementById("listProduk").innerHTML = html;
-  let total = 0; for(let i=0;i<PRODUK.length;i++){ total += (keranjang[i]||0)*PRODUK[i].harga; }
-  document.getElementById("totalBayar").innerText = rupiah(total);
+
+// ===== PRODUK =====
+function renderProdukSelect(){
+  let sel=document.getElementById('produk'); sel.innerHTML='';
+  products.forEach((p,i)=>{let o=document.createElement('option');o.value=i;o.textContent=p.nama+' - '+rp(p.harga)+' (Stok '+p.stok+')';sel.appendChild(o)});
+  updatePreview();
 }
-function ubah(i,d){ keranjang[i]=Math.max(0,(keranjang[i]||0)+d); if(keranjang[i]==0) delete keranjang[i]; renderProduk(); }
-function terjual(i){ let s=0; for(let k=0;k<data.length;k++){ s += (data[k].items[i]||0); } return s; }
+function updatePreview(){
+  let i=document.getElementById('produk').value; if(i==='')return;
+  let p=products[i]; document.getElementById('harga').value=p.harga;
+  let qty=Number(document.getElementById('qty').value||1);
+  document.getElementById('previewTotal').textContent=rp(p.harga*qty);
+  document.getElementById('previewUntung').textContent='Untung: '+rp((p.harga-p.modal)*qty);
+}
+document.getElementById('produk').addEventListener('change',updatePreview);
+document.getElementById('qty').addEventListener('input',updatePreview);
+document.getElementById('harga').addEventListener('input',()=>{
+  let qty=Number(document.getElementById('qty').value||1);
+  let h=Number(document.getElementById('harga').value||0);
+  document.getElementById('previewTotal').textContent=rp(h*qty);
+});
+
+// ===== SIMPAN / EDIT =====
 function simpan(){
-  let total=0; for(let i=0;i<PRODUK.length;i++){ total += (keranjang[i]||0)*PRODUK[i].harga; }
-  if(total==0) return alert("Pilih cerutu dulu Aa");
-  let nama = document.getElementById("nama").value || "Umum";
-  let tgl = document.getElementById("tanggal").value;
-  let untung=0; for(let i=0;i<PRODUK.length;i++){ untung += (keranjang[i]||0)*(PRODUK[i].harga-PRODUK[i].modal); }
-  if(editJualId){
-    for(let idx=0;idx<data.length;idx++){ if(data[idx].id==editJualId){ data[idx]={id:data[idx].id, nama:nama, tgl:tgl, tipe:tipe, bayar:bayar, items:Object.assign({},keranjang), total:total, untung:untung, lunas:false, dibayar: bayar=="Kasbon"?0:total}; break; } }
-    localStorage.setItem("cigarmart", JSON.stringify(data));
-    batalEditJual(); renderProduk(); renderDash(); alert("Transaksi berhasil di-update Aa"); return;
+  let tgl=document.getElementById('tgl').value||todayStr();
+  let nama=(document.getElementById('nama').value||'Umum').trim()||'Umum';
+  let pi=document.getElementById('produk').value; if(pi===''){alert('Pilih produk dulu');return}
+  let p=products[pi];
+  let harga=Number(document.getElementById('harga').value||p.harga);
+  let qty=Number(document.getElementById('qty').value||1);
+  let bayar=document.getElementById('bayar').value;
+  let catatan=document.getElementById('catatan').value||'';
+  let total=harga*qty; let untung=(harga-p.modal)*qty;
+  if(editId){
+    let s=sales.find(x=>x.id===editId);
+    if(s){s.tgl=tgl;s.nama=nama;s.produk=p.nama;s.harga=harga;s.qty=qty;s.total=total;s.untung=untung;s.bayar=bayar;s.catatan=catatan;s.lunas=(bayar==='Kasbon'? (s.lunas||false):true)}
+    editId=null; document.getElementById('btnSimpan').textContent='💾 SIMPAN PENJUALAN'; document.getElementById('btnBatalEdit').classList.add('hidden');
+    alert('Berhasil di-UPDATE!');
+  } else {
+    sales.unshift({id:Date.now(),tgl,nama,produk:p.nama,harga,qty,total,untung,bayar,catatan,modal:p.modal,lunas:(bayar!=='Kasbon')});
+    // kurangi stok
+    p.stok=Math.max(0,p.stok-qty); saveProducts();
   }
-  data.push({id: Date.now()+Math.random(), nama:nama, tgl:tgl, tipe:tipe, bayar:bayar, items:Object.assign({},keranjang), total:total, untung:untung, lunas:false, dibayar: bayar=="Kasbon"?0:total});
-  localStorage.setItem("cigarmart", JSON.stringify(data));
-  keranjang={}; document.getElementById("nama").value="";
-  renderProduk(); renderDash(); alert("Penjualan tersimpan! Total "+rupiah(total));
+  saveSales(); resetForm(); renderAll(); showTab('buku');
 }
-function batalEditJual(){ editJualId=null; keranjang={}; document.getElementById("judulJual").innerText="+ Catat Penjualan Baru"; document.getElementById("infoEdit").style.display="none"; document.getElementById("btnSimpanJual").innerText="SIMPAN PENJUALAN"; document.getElementById("btnBatalJual").style.display="none"; document.getElementById("nama").value=""; renderProduk(); }
-function setDanaTipe(t){ danaTipe=t; document.getElementById("danaMasukBtn").className = t=="masuk" ? "flex-1 bg-emerald-600 text-white py-2 rounded-xl font-bold text-sm" : "flex-1 bg-gray-100 py-2 rounded-xl text-sm"; document.getElementById("danaKeluarBtn").className = t=="keluar" ? "flex-1 bg-rose-500 text-white py-2 rounded-xl font-bold text-sm" : "flex-1 bg-gray-100 py-2 rounded-xl text-sm"; cekPinjam(); }
-function simpanDana(){
-  let nominal = parseInt(document.getElementById("danaNominal").value)||0;
-  let ket = document.getElementById("danaKeterangan").value.trim();
-  if(!nominal || !ket) return alert("Isi Nominal & Keterangan dulu Aa!");
-  let isPinjam = ket.toLowerCase().indexOf("pinjam")>=0 && danaTipe=="masuk";
-  let dari = document.getElementById("danaDari").value.trim() || "-";
-  let jatuh = document.getElementById("danaJatuhTempo").value || "-";
-  if(isPinjam && dari=="-"){ alert("Karena ini PINJAM, isi dulu Pinjam dari siapa ya Aa"); return; }
-  danaList.push({id: Date.now()+Math.random(), tipe:danaTipe, nominal:nominal, keterangan:ket, tgl:new Date().toISOString().slice(0,10), isPinjam:isPinjam, dari:dari, jatuhTempo:jatuh, lunasPinjam:false});
-  localStorage.setItem("cigarmart_dana", JSON.stringify(danaList));
-  document.getElementById("danaNominal").value=""; document.getElementById("danaKeterangan").value=""; document.getElementById("danaDari").value=""; document.getElementById("danaJatuhTempo").value=""; document.getElementById("formPinjam").style.display="none";
-  renderDash(); alert(isPinjam ? "Tercatat! Pinjaman masuk pengingat ya Aa" : "Dana tersimpan Aa");
-}
-function hapusDana(id){ if(confirm("Hapus catatan dana ini?")){ let tmp=[]; for(let i=0;i<danaList.length;i++){ if(danaList[i].id!=id) tmp.push(danaList[i]); } danaList=tmp; localStorage.setItem("cigarmart_dana", JSON.stringify(danaList)); renderDash(); } }
-function lunasPinjam(id){ for(let i=0;i<danaList.length;i++){ if(danaList[i].id==id){ if(confirm("Pinjaman dari "+danaList[i].dari+" sebesar "+rupiah(danaList[i].nominal)+" udah dibalikin?")){ danaList[i].lunasPinjam=true; localStorage.setItem("cigarmart_dana", JSON.stringify(danaList)); renderDash(); alert("Alhamdulillah, pinjaman lunas!"); } break; } } }
-function renderDana(){
-  let masuk=0, keluar=0; for(let i=0;i<danaList.length;i++){ if(danaList[i].tipe=="masuk") masuk+=danaList[i].nominal; else keluar+=danaList[i].nominal; }
-  document.getElementById("totalDanaMasuk").innerText = rupiah(masuk);
-  document.getElementById("totalDanaKeluar").innerText = rupiah(keluar);
-  let html=""; for(let i=danaList.length-1;i>=0;i--){ let d=danaList[i]; html += '<div class="flex justify-between items-center border-b py-2"><span><b class="'+(d.tipe=="masuk"?"text-emerald-600":"text-rose-600")+'">'+(d.tipe=="masuk"?"MASUK":"KELUAR")+' '+rupiah(d.nominal)+'</b><br><span class="text-xs text-gray-500">'+d.keterangan+' • '+d.tgl+'</span></span><button onclick="hapusDana('+d.id+')" class="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">Hapus</button></div>'; }
-  document.getElementById("listDana").innerHTML = html || "<p class='text-gray-400'>Belum ada dana masuk / keluar</p>";
-  let pinjamAktif=[]; for(let i=0;i<danaList.length;i++){ if(danaList[i].isPinjam && !danaList[i].lunasPinjam) pinjamAktif.push(danaList[i]); }
-  let box = document.getElementById("boxPinjam");
-  if(pinjamAktif.length>0){
-    box.style.display="block";
-    let totalP=0; for(let i=0;i<pinjamAktif.length;i++) totalP+=pinjamAktif[i].nominal;
-    document.getElementById("totalPinjam").innerText = "Total yang masih harus dibalikin: "+rupiah(totalP);
-    let h2=""; for(let i=0;i<pinjamAktif.length;i++){ let d=pinjamAktif[i]; h2 += '<div class="bg-white p-3 rounded-xl mt-2 flex justify-between items-center gap-2"><span><b>Pinjam dari '+d.dari+'</b><br><span class="text-xs">'+d.keterangan+' • '+rupiah(d.nominal)+' • Jatuh tempo: '+d.jatuhTempo+'</span></span><button onclick="lunasPinjam('+d.id+')" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shrink-0">LUNAS</button></div>'; }
-    document.getElementById("listPinjam").innerHTML = h2;
-  } else { box.style.display="none"; }
-}
-function lunasKasbon(id){ for(let i=0;i<data.length;i++){ if(data[i].id==id){ if(confirm("Tandai "+data[i].nama+" udah LUNAS?")){ data[i].dibayar=data[i].total; data[i].lunas=true; data[i].bayar="Kasbon - LUNAS"; localStorage.setItem("cigarmart", JSON.stringify(data)); renderDash(); alert("Sip! "+data[i].nama+" udah lunas Aa"); } break; } } }
-function bayarSebagian(id){ for(let i=0;i<data.length;i++){ if(data[i].id==id){ let sisa=data[i].total-(data[i].dibayar||0); let v=prompt(data[i].nama+" masih ngutang "+rupiah(sisa)+"\nMau bayar berapa?", sisa); if(v===null||v==="") return; let bn=parseInt(v)||0; if(bn<=0) return alert("Nominal harus lebih dari 0"); if(bn>=sisa){ data[i].dibayar=data[i].total; data[i].lunas=true; data[i].bayar="Kasbon - LUNAS"; alert("LUNAS!"); } else { data[i].dibayar=(data[i].dibayar||0)+bn; alert("Tercatat! Sisa tinggal "+rupiah(data[i].total-data[i].dibayar)); } localStorage.setItem("cigarmart", JSON.stringify(data)); renderDash(); break; } } }
-function shareWA(){
-  let today=new Date().toISOString().slice(0,10);
-  let hariIni=[]; for(let i=0;i<data.length;i++){ if(data[i].tgl==today) hariIni.push(data[i]); }
-  let omset=0,jual=0,unt=0,cash=0,tf=0,kasbon=0; for(let i=0;i<hariIni.length;i++){ omset+=hariIni[i].total; unt+=hariIni[i].untung; let q=0; for(let k in hariIni[i].items) q+=hariIni[i].items[k]; jual+=q; if(hariIni[i].bayar=="Tunai") cash+=hariIni[i].total; if(hariIni[i].bayar=="Transfer") tf+=hariIni[i].total; if(hariIni[i].bayar=="Kasbon") kasbon+=(hariIni[i].total-(hariIni[i].dibayar||0)); }
-  let teks="*LAPORAN CIGAR MART* \nTanggal: "+today+"\n\nOmset: "+rupiah(omset)+"\nTerjual: "+jual+" bungkus\nUntung: "+rupiah(unt)+"\nCash: "+rupiah(cash)+"\nTransfer: "+rupiah(tf)+"\nKasbon: "+rupiah(kasbon)+"\nTransaksi: "+hariIni.length+" kali";
-  window.open("https://wa.me/?text="+encodeURIComponent(teks), "_blank");
-}
+function resetForm(){document.getElementById('nama').value='';document.getElementById('qty').value=1;document.getElementById('catatan').value='';document.getElementById('tgl').value=todayStr();}
+function batalEdit(){editId=null;document.getElementById('btnSimpan').textContent='💾 SIMPAN PENJUALAN';document.getElementById('btnBatalEdit').classList.add('hidden');resetForm();}
 function editTransaksi(id){
-  for(let i=0;i<data.length;i++){ if(data[i].id==id){ let d=data[i]; editJualId=id; keranjang=Object.assign({},d.items); document.getElementById("nama").value=d.nama; document.getElementById("tanggal").value=d.tgl; setTipe(d.tipe||"Reguler"); setBayar(d.bayar=="Kasbon - LUNAS"?"Kasbon":d.bayar); document.getElementById("judulJual").innerText="Edit Transaksi - "+d.nama; document.getElementById("infoEdit").style.display="block"; document.getElementById("btnSimpanJual").innerText="UPDATE TRANSAKSI"; document.getElementById("btnBatalJual").style.display="block"; renderProduk(); showTab('penjualan'); break; } }
+  let s=sales.find(x=>x.id===id); if(!s)return;
+  editId=id; showTab('jual');
+  document.getElementById('tgl').value=s.tgl; document.getElementById('nama').value=s.nama;
+  let idx=products.findIndex(p=>p.nama===s.produk); if(idx>=0)document.getElementById('produk').value=idx;
+  document.getElementById('harga').value=s.harga; document.getElementById('qty').value=s.qty;
+  document.getElementById('bayar').value=s.bayar; document.getElementById('catatan').value=s.catatan||'';
+  document.getElementById('btnSimpan').textContent='✅ UPDATE TRANSAKSI'; document.getElementById('btnBatalEdit').classList.remove('hidden');
+  window.scrollTo(0,0); updatePreview();
 }
-function kirimNota(id){
-  let d=null; for(let i=0;i<data.length;i++){ if(data[i].id==id) d=data[i]; }
-  if(!d) return;
-  let c=document.getElementById("canvasNota"); let ctx=c.getContext("2d");
-  ctx.fillStyle="#fff"; ctx.fillRect(0,0,480,640); ctx.fillStyle="#1a120b"; ctx.fillRect(0,0,480,90);
-  ctx.fillStyle="#fff"; ctx.font="bold 28px Arial"; ctx.fillText("CIGAR MART",20,40); ctx.font="14px Arial"; ctx.fillText("Premium Cigar",20,65);
-  ctx.fillStyle="#000"; ctx.font="bold 18px Arial"; ctx.fillText("NOTA PENJUALAN",20,125); ctx.font="15px Arial"; ctx.fillText("Tanggal: "+d.tgl,20,155); ctx.fillText("Pembeli: "+d.nama,20,180); ctx.fillText("Bayar: "+d.bayar,20,205); ctx.fillRect(20,220,440,1);
-  let y=250; for(let k in d.items){ let p=PRODUK[k]; if(!p) continue; ctx.fillText(p.nama+" x"+d.items[k],20,y); ctx.fillText(rupiah(p.harga*d.items[k]),340,y); y+=28; }
-  ctx.fillRect(20,y+5,440,1); ctx.font="bold 20px Arial"; ctx.fillText("TOTAL: "+rupiah(d.total),20,y+40);
-  c.toBlob(function(blob){
-    let file=new File([blob],"nota-cigarmart.png",{type:"image/png"});
-    let teks="Nota Cigar Mart - "+d.nama+" Total "+rupiah(d.total);
-    if(navigator.canShare && navigator.canShare({files:[file]})){ navigator.share({files:[file], title:"Nota", text:teks}); return; }
-    let a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="nota.png"; a.click();
-    window.open("https://wa.me/?text="+encodeURIComponent(teks),"_blank");
-  },"image/png");
+function hapusTransaksi(id){
+  if(!confirm('Hapus transaksi ini? Stok akan balik.'))return;
+  let s=sales.find(x=>x.id===id); if(s){let p=products.find(p=>p.nama===s.produk); if(p)p.stok+=s.qty; saveProducts();}
+  sales=sales.filter(x=>x.id!==id); saveSales(); renderAll();
 }
-function renderDash(){
-  let today=new Date().toISOString().slice(0,10);
-  let hariIni=[]; for(let i=0;i<data.length;i++){ if(data[i].tgl==today) hariIni.push(data[i]); }
-  let omset=0,jual=0,unt=0,cash=0,tf=0,kasbon=0; let cashList=0,tfList=0,kasbonListArr=[]; let lunasList=[];
-  for(let i=0;i<hariIni.length;i++){ let d=hariIni[i]; omset+=d.total; unt+=d.untung; for(let k in d.items) jual+=d.items[k]; if(d.bayar=="Tunai"){cash+=d.total; cashList++;} if(d.bayar=="Transfer"){tf+=d.total; tfList++;} if(d.bayar=="Kasbon"){kasbon+=(d.total-(d.dibayar||0)); kasbonListArr.push(d);} if(d.bayar=="Kasbon - LUNAS"||d.lunas) lunasList.push(d); }
-  document.getElementById("omset").innerText=rupiah(omset);
-  document.getElementById("jmlTransaksi").innerText=hariIni.length+" transaksi hari ini";
-  document.getElementById("totalJual").innerText=jual+" bungkus";
-  document.getElementById("untung").innerText=rupiah(unt);
-  document.getElementById("kasbonTotal").innerText=rupiah(kasbon);
-  document.getElementById("kasbonTotal2").innerText=rupiah(kasbon);
-  document.getElementById("kasbonCount").innerText=kasbonListArr.length+" orang ngutang";
-  document.getElementById("totalCash").innerText=rupiah(cash);
-  document.getElementById("countCash").innerText=cashList+"x";
-  document.getElementById("totalTransfer").innerText=rupiah(tf);
-  document.getElementById("countTransfer").innerText=tfList+"x";
-  document.getElementById("totalKasbonBuku").innerText=rupiah(kasbon);
-  document.getElementById("countKasbonBuku").innerText=kasbonListArr.length+"x";
-  let rh=""; for(let i=0;i<hariIni.length;i++){ let d=hariIni[i]; let itemsTxt=""; for(let k in d.items){ if(PRODUK[k]) itemsTxt+=PRODUK[k].nama+" x"+d.items[k]+", "; } rh+='<div class="border-b py-3"><div class="flex justify-between"><span><b>'+d.nama+'</b> • '+itemsTxt+'<br><span class="text-xs text-gray-500">'+d.bayar+'</span></span><b>'+rupiah(d.total)+'</b></div><div class="flex gap-2 mt-2"><button onclick="editTransaksi('+d.id+')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Edit</button><button onclick="kirimNota('+d.id+')" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Nota WA</button></div></div>'; }
-  document.getElementById("riwayat").innerHTML=rh || "<p class='text-gray-400'>Belum ada penjualan hari ini</p>";
-  let kh=""; for(let i=0;i<kasbonListArr.length;i++){ let d=kasbonListArr[i]; let sisa=d.total-(d.dibayar||0); kh+='<div class="bg-rose-50 p-3 rounded-xl mt-2"><b>'+d.nama+'</b> • Sisa '+rupiah(sisa)+'<div class="flex gap-2 mt-2"><button onclick="bayarSebagian('+d.id+')" class="flex-1 bg-amber-500 text-white px-3 py-2 rounded-full text-xs font-bold">BAYAR SEBAGIAN</button><button onclick="lunasKasbon('+d.id+')" class="flex-1 bg-green-500 text-white px-3 py-2 rounded-full text-xs font-bold">LUNAS</button></div></div>'; }
-  document.getElementById("listKasbon").innerHTML=kh || "<p class='text-gray-400'>Tidak ada Kasbon hari ini</p>";
-  let lh=""; for(let i=0;i<lunasList.length;i++){ lh+='<div class="flex justify-between border-b py-2"><span>'+lunasList[i].nama+'</span><b>'+rupiah(lunasList[i].total)+'</b></div>'; }
-  document.getElementById("listLunas").innerHTML=lh || "<p class='text-gray-400'>Belum ada yang lunas</p>";
-  let danaMasuk=0,danaKeluar=0; for(let i=0;i<danaList.length;i++){ if(danaList[i].tipe=="masuk") danaMasuk+=danaList[i].nominal; else danaKeluar+=danaList[i].nominal; }
-  document.getElementById("laporanIsi").innerHTML='<div class="flex justify-between border-b py-2"><span>Omset</span><b>'+rupiah(omset)+'</b></div><div class="flex justify-between border-b py-2"><span>Cash</span><b>'+rupiah(cash)+'</b></div><div class="flex justify-between border-b py-2"><span>Transfer</span><b>'+rupiah(tf)+'</b></div><div class="flex justify-between border-b py-2"><span>Untung</span><b>'+rupiah(unt)+'</b></div><div class="flex justify-between border-b py-2"><span>Kasbon</span><b>'+rupiah(kasbon)+'</b></div><div class="flex justify-between border-b py-2"><span>Dana Masuk</span><b>'+rupiah(danaMasuk)+'</b></div><div class="flex justify-between py-2"><span>Dana Keluar</span><b>'+rupiah(danaKeluar)+'</b></div>';
-  let lp=""; for(let i=0;i<PRODUK.length;i++){ lp+='<div class="flex justify-between border-b py-2"><span>'+PRODUK[i].nama+'</span><span>Terjual '+terjual(i)+' • Sisa '+(PRODUK[i].stok-terjual(i))+'</span></div>'; }
-  document.getElementById("laporanProduk").innerHTML=lp;
-  let ls=""; for(let i=0;i<PRODUK.length;i++){ ls+='<div class="flex justify-between items-center border-b py-2"><span>'+PRODUK[i].nama+'<br><span class="text-gray-400 text-xs">Sisa '+(PRODUK[i].stok-terjual(i))+' • '+rupiah(PRODUK[i].harga)+'</span></span><span class="flex gap-1"><button onclick="ubahStok('+i+',-1)" class="w-7 h-7 bg-gray-100 rounded-full font-bold">-</button><button onclick="ubahStok('+i+',1)" class="w-7 h-7 bg-black text-white rounded-full font-bold">+</button><button onclick="editStokManual('+i+')" class="bg-amber-100 px-2 rounded-full text-xs">Edit</button></span></div>'; }
-  document.getElementById("listStok").innerHTML=ls;
-  renderKelola(); renderDana();
+function notaWA(id){
+  let s=sales.find(x=>x.id===id); if(!s)return;
+  let txt='*CIGAR MART*%0A'+s.tgl+' - '+s.nama+'%0A'+s.produk+' x'+s.qty+' = '+rp(s.total)+'%0A Bayar: '+s.bayar+(s.bayar==='Kasbon'?' (KASBON)':'');
+  window.open('https://wa.me/?text='+txt,'_blank');
 }
-function ubahStok(i,d){ PRODUK[i].stok=Math.max(0,PRODUK[i].stok+d); saveProduk(); renderProduk(); renderDash(); }
-function editStokManual(i){ let v=prompt("Masukkan stok baru untuk "+PRODUK[i].nama+":", PRODUK[i].stok); if(v!==null && v!==""){ PRODUK[i].stok=parseInt(v)||0; saveProduk(); renderProduk(); renderDash(); } }
-function renderKelola(){ let h=""; for(let i=0;i<PRODUK.length;i++){ h+='<div class="flex justify-between items-center gap-2 border-b py-2"><span class="flex-1"><b>'+PRODUK[i].nama+'</b><br><span class="text-gray-400 text-xs">Jual '+rupiah(PRODUK[i].harga)+' • Stok '+PRODUK[i].stok+'</span></span><span class="flex gap-1"><button onclick="editBarang('+i+')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">Edit</button><button onclick="hapusBarang('+i+')" class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">Hapus</button></span></div>'; } document.getElementById("listKelola").innerHTML=h; }
-function editBarang(i){ let p=PRODUK[i]; document.getElementById("fNama").value=p.nama; document.getElementById("fHarga").value=p.harga; document.getElementById("fModal").value=p.modal; document.getElementById("fStok").value=p.stok; document.getElementById("editIndex").value=i; document.getElementById("btnSimpanBarang").innerText="SIMPAN PERUBAHAN"; document.getElementById("btnBatal").classList.remove("hidden"); window.scrollTo({top:0, behavior:"smooth"}); }
-function batalEdit(){ document.getElementById("fNama").value=""; document.getElementById("fHarga").value=""; document.getElementById("fModal").value=""; document.getElementById("fStok").value=""; document.getElementById("editIndex").value=-1; document.getElementById("btnSimpanBarang").innerText="+ TAMBAH BARANG BARU"; document.getElementById("btnBatal").classList.add("hidden"); }
-function simpanBarang(){ let nama=document.getElementById("fNama").value.trim(); let harga=parseInt(document.getElementById("fHarga").value)||0; let modal=parseInt(document.getElementById("fModal").value)||0; let stok=parseInt(document.getElementById("fStok").value)||0; let idx=parseInt(document.getElementById("editIndex").value); if(!nama||!harga){ alert("Isi dulu Nama dan Harga Jual Aa!"); return; } if(idx>=0){ PRODUK[idx]={nama:nama,harga:harga,modal:modal,stok:stok}; alert("Berhasil diedit!"); } else { PRODUK.push({nama:nama,harga:harga,modal:modal,stok:stok}); } saveProduk(); batalEdit(); renderProduk(); renderDash(); }
-function hapusBarang(i){ if(confirm("Hapus "+PRODUK[i].nama+" ?")){ PRODUK.splice(i,1); saveProduk(); renderProduk(); renderDash(); } }
-function resetData(){ if(confirm("Hapus semua data penjualan?")){ localStorage.removeItem("cigarmart"); data=[]; renderDash(); renderProduk(); } }
-renderProduk(); renderDash();
+
+// ===== FILTER PEMBUKUAN =====
+function setFilter(m){
+  filterMode=m;
+  document.getElementById('fAll').classList.toggle('active',m==='all');
+  document.getElementById('fToday').classList.toggle('active',m==='today');
+  renderBuku();
+}
+function getFiltered(){
+  if(filterMode==='today')return sales.filter(s=>s.tgl===todayStr());
+  if(filterMode==='pick'){let d=document.getElementById('filterTgl').value; return sales.filter(s=>s.tgl===d);}
+  return sales;
+}
+
+// ===== RENDER PEMBUKUAN =====
+function renderBuku(){
+  let list=getFiltered();
+  let omset=list.reduce((a,s)=>a+s.total,0);
+  let untung=list.reduce((a,s)=>a+s.untung,0);
+  let bungkus=list.reduce((a,s)=>a+s.qty,0);
+  let kasbonBelum=list.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  document.getElementById('rekapFilter').innerHTML='Omset: '+rp(omset)+' | Untung: '+rp(untung)+' | Transaksi: '+list.length+'x | Bungkus: '+bungkus+' | Kasbon Belum Lunas: '+rp(kasbonBelum);
+  let html=list.length===0?'<p style="color:#888">Belum ada penjualan di filter ini.</p>':'';
+  list.forEach(s=>{
+    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b><br><small>'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</small><br><b>'+rp(s.total)+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span><br><small>Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</small><div class="actions"><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#eee" onclick="notaWA('+s.id+')">Nota WA</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button>'+(s.bayar==='Kasbon'?'<button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button>':'')+'</div></div>';
+  });
+  document.getElementById('listRiwayat').innerHTML=html;
+}
+function toggleLunas(id){let s=sales.find(x=>x.id===id); if(s){s.lunas=!s.lunas; saveSales(); renderAll();}}
+
+// ===== KASBON FILTER PER NAMA =====
+function pilihNamaKasbon(){
+  let v=document.getElementById('pilihNama').value;
+  document.getElementById('cariNama').value=v;
+  renderKasbon();
+}
+function renderKasbon(){
+  // isi dropdown nama unik
+  let names=[...new Set(sales.filter(s=>s.bayar==='Kasbon').map(s=>s.nama))].sort();
+  let sel=document.getElementById('pilihNama');
+  let cur=sel.value;
+  sel.innerHTML='<option value="">-- Semua Nama --</option>';
+  names.forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+  if(names.includes(cur)) sel.value=cur;
+  // filter
+  let q=(document.getElementById('cariNama').value||'').toLowerCase().trim();
+  let list=sales.filter(s=>s.bayar==='Kasbon');
+  if(q) list=list.filter(s=>s.nama.toLowerCase().includes(q));
+  // TOTAL PER NAMA YANG TAMPIL
+  let totalSemua=list.reduce((a,s)=>a+s.total,0);
+  let belum=list.filter(s=>!s.lunas).reduce((a,s)=>a+s.total,0);
+  let lunas=list.filter(s=>s.lunas).reduce((a,s)=>a+s.total,0);
+  let namaTampil=q?('Nama: <b>'+q+'</b>'):'Semua Nama Kasbon';
+  document.getElementById('totalKasbonNama').innerHTML=namaTampil+'<br>Total Kasbon: '+rp(totalSemua)+'<br>Belum Lunas: <span style="color:#c00">'+rp(belum)+'</span> | Sudah Lunas: <span style="color:#27ae60">'+rp(lunas)+'</span><br>Jumlah Transaksi: '+list.length+'x';
+  let html=list.length===0?'<p style="color:#888">Tidak ada kasbon untuk nama ini.</p>':'';
+  list.forEach(s=>{
+    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span><br><small>'+s.produk+' x'+s.qty+'</small><br><b>'+rp(s.total)+'</b><div class="actions"><button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div>';
+  });
+  document.getElementById('listKasbon').innerHTML=html;
+}
+
+// ===== STOK =====
+function tambahProduk(){
+  let n=document.getElementById('newNama').value.trim(); if(!n){alert('Isi nama produk');return}
+  products.push({nama:n,harga:Number(document.getElementById('newHarga').value||0),modal:Number(document.getElementById('newModal').value||0),stok:Number(document.getElementById('newStok').value||0)});
+  saveProducts(); document.getElementById('newNama').value=''; renderAll(); alert('Produk ditambah');
+}
+function renderStok(){
+  let html='';
+  products.forEach((p,i)=>{
+    html+='<div class="item"><b>'+p.nama+'</b><br><small>Harga '+rp(p.harga)+' | Modal '+rp(p.modal)+' | Stok '+p.stok+'</small><div class="actions"><button style="background:#eee" onclick="tambahStok('+i+')">+ Stok 10</button><button style="background:#e74c3c;color:#fff" onclick="hapusProduk('+i+')">Hapus</button></div></div>';
+  });
+  document.getElementById('listStok').innerHTML=html;
+}
+function tambahStok(i){products[i].stok+=10; saveProducts(); renderAll();}
+function hapusProduk(i){if(confirm('Hapus produk ini?')){products.splice(i,1); saveProducts(); renderAll();}}
+
+// ===== KPI ALL TIME =====
+function renderKPI(){
+  let omsetAll=sales.reduce((a,s)=>a+s.total,0);
+  let untungAll=sales.reduce((a,s)=>a+s.untung,0);
+  let bungkusAll=sales.reduce((a,s)=>a+s.qty,0);
+  let omsetToday=sales.filter(s=>s.tgl===todayStr()).reduce((a,s)=>a+s.total,0);
+  let kasbonAll=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  document.getElementById('kpiOmsetAll').textContent=rp(omsetAll);
+  document.getElementById('kpiUntungAll').textContent=rp(untungAll);
+  document.getElementById('kpiTrxAll').textContent=sales.length;
+  document.getElementById('kpiBungkusAll').textContent=bungkusAll;
+  document.getElementById('kpiOmsetToday').textContent=rp(omsetToday);
+  document.getElementById('kpiKasbonAll').textContent=rp(kasbonAll);
+}
+function renderAll(){renderProdukSelect();renderKPI();renderBuku();renderKasbon();renderStok();}
+renderAll();
 </script>
 </body>
 </html>
