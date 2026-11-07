@@ -131,6 +131,10 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 
 <!-- SALDO -->
 <div id="page-saldo" class="hidden">
+<div class="card" style="border:2px solid #e74c3c">
+<h3>🔔 PENGINGAT PINJAMAN BELUM DIBAYAR</h3>
+<div id="listPinjaman">Memuat...</div>
+</div>  
 <div class="card" style="background:#111;color:#fff">
 <h3 style="color:#f5c518">💰 LAPORAN SALDO</h3>
 <div class="kpi">
@@ -455,6 +459,25 @@ function bayarKasbonSebagianByNama(){
   saveSales(); renderAll();
 }    
 renderAll();
+// ===== PENGINGAT PINJAMAN =====
+function tandaiPinjamanLunas(id){
+  let d=dana.find(x=>x.id===id); if(!d) return;
+  if(confirm('Pinjaman "'+d.ket+'" sebesar '+rp(d.jumlah)+' sudah dibayar lunas?')){d.lunasPinjam=true; saveDana(); renderAll();}
+}
+function renderPinjaman(){
+  let el=document.getElementById('listPinjaman'); if(!el) return;
+  let pinjam=dana.filter(d=>d.tipe==='masuk'&&d.ket.includes('Pinjam dana')&&!d.lunasPinjam);
+  let tot=pinjam.reduce((a,d)=>a+d.jumlah,0);
+  if(pinjam.length===0){el.innerHTML='<p style="color:#27ae60">✅ Aman, tidak ada pinjaman yang belum dibayar.</p>';return}
+  let html='<div class="total-box" style="background:#ffecec">Total Pinjaman Belum Dibayar: <b style="color:#c00">'+rp(tot)+'</b></div>';
+  pinjam.forEach(d=>{
+    html+='<div class="item"><b>⚠️ '+d.tgl+' - '+d.ket+'</b><br><small>Masuk ke: '+d.metode+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:#c00">'+rp(d.jumlah)+'</b><div class="actions"><button style="background:#27ae60;color:#fff" onclick="tandaiPinjamanLunas('+d.id+')">✅ Sudah Dibayar</button><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>';
+  });
+  el.innerHTML=html;
+}
+// biar pengingat pinjaman ikut ke-render tiap buka saldo
+let _oldRenderSaldo2=renderSaldo;
+renderSaldo=function(){_oldRenderSaldo2(); renderPinjaman();};    
 </script>
 </body>
 </html>
