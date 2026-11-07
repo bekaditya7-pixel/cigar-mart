@@ -438,26 +438,36 @@ showTab=function(t){
 };
 // BAYAR SEBAGIAN KASBON - CARA NAMA
 function bayarKasbonSebagianByNama(){
-  let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Budi');
+  // PERBAIKAN DATA LAMA: kalau sebelumnya pernah bayar sebagian tapi total belum ngurang, perbaiki dulu sekali
+  sales.forEach(x=>{
+    if(x.dibayar>0 && !x._udahDiperbaiki){
+      x.total = x.total - x.dibayar;
+      x.dibayar = 0;
+      x._udahDiperbaiki = true;
+      if(x.total<=0){x.total=0; x.lunas=true;}
+    }
+  });
+  let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Sujai');
   if(!nama) return;
   let s=sales.filter(x=>x.bayar==='Kasbon'&&!x.lunas&&x.nama.toLowerCase().includes(nama.toLowerCase()));
   if(s.length===0){alert('Gak ketemu kasbon atas nama '+nama+' yang belum lunas');return}
   let pilih=s[0];
   if(s.length>1){
-    let teks=s.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+((x.total-(x.dibayar||0)))+' - '+x.barang).join('\n');
+    let teks=s.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+x.total).join('\n');
     let no=Number(prompt('Ada '+s.length+' kasbon '+nama+', pilih nomornya:\n'+teks,'1'));
     if(!no||no<1||no>s.length) return;
     pilih=s[no-1];
   }
-  let sudah=pilih.dibayar||0; let sisa=pilih.total-sudah;
-  let bayar=Number(prompt('Kasbon '+pilih.nama+' - '+pilih.barang+'\nTotal: '+pilih.total+'\nSudah dibayar: '+sudah+'\nSisa: '+sisa+'\n\nMau bayar berapa sekarang?',''));
+  let sisa=pilih.total;
+  let bayar=Number(prompt('Kasbon '+pilih.nama+'\nSisa: '+sisa+'\n\nMau bayar berapa sekarang?',''));
   if(!bayar||bayar<=0) return;
   if(bayar>sisa){alert('Kelebihan! Sisa cuma '+sisa);return}
-  pilih.dibayar=sudah+bayar;
-  if(pilih.dibayar>=pilih.total){pilih.lunas=true; alert('LUNAS! Kasbon '+pilih.nama+' lunas');}
-  else{alert('Tersimpan. Sisa kasbon '+pilih.nama+' tinggal '+(pilih.total-pilih.dibayar))}
+  pilih.total = sisa - bayar;
+  pilih.sudahBayarSebagian = (pilih.sudahBayarSebagian||0) + bayar;
+  if(pilih.total<=0){pilih.total=0; pilih.lunas=true; alert('LUNAS! Kasbon '+pilih.nama+' sudah lunas');}
+  else{alert('Tersimpan. Sisa kasbon '+pilih.nama+' tinggal '+pilih.total)}
   saveSales(); renderAll();
-}    
+}
 renderAll();
 // ===== PENGINGAT PINJAMAN =====
 function tandaiPinjamanLunas(id){
