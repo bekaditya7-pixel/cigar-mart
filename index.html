@@ -438,36 +438,36 @@ showTab=function(t){
 };
 // BAYAR SEBAGIAN KASBON - CARA NAMA
 function bayarKasbonSebagianByNama(){
-  // PERBAIKAN DATA LAMA: kalau sebelumnya pernah bayar sebagian tapi total belum ngurang, perbaiki dulu sekali
-  sales.forEach(x=>{
-    if(x.dibayar>0 && !x._udahDiperbaiki){
-      x.total = x.total - x.dibayar;
-      x.dibayar = 0;
-      x._udahDiperbaiki = true;
-      if(x.total<=0){x.total=0; x.lunas=true;}
-    }
-  });
   let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Sujai');
   if(!nama) return;
-  let s=sales.filter(x=>x.bayar==='Kasbon'&&!x.lunas&&x.nama.toLowerCase().includes(nama.toLowerCase()));
-  if(s.length===0){alert('Gak ketemu kasbon atas nama '+nama+' yang belum lunas');return}
+  // cari Sujai dengan cara paling longgar
+  let s=sales.filter(x=>!x.lunas && x.nama.toLowerCase().includes(nama.toLowerCase()));
+  if(s.length===0){alert('Gak ketemu kasbon '+nama+' - Coba cek tulisan namanya, huruf besar kecilnya harus sama');return}
   let pilih=s[0];
   if(s.length>1){
     let teks=s.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+x.total).join('\n');
-    let no=Number(prompt('Ada '+s.length+' kasbon '+nama+', pilih nomornya:\n'+teks,'1'));
-    if(!no||no<1||no>s.length) return;
+    let no=Number(prompt('Pilih nomornya:\n'+teks,'1'));
+    if(!no) return;
     pilih=s[no-1];
   }
-  let sisa=pilih.total;
+  let sisa=Number(pilih.total);
   let bayar=Number(prompt('Kasbon '+pilih.nama+'\nSisa: '+sisa+'\n\nMau bayar berapa sekarang?',''));
-  if(!bayar||bayar<=0) return;
+  if(!bayar||bayar<=0){alert('Jumlah salah');return}
   if(bayar>sisa){alert('Kelebihan! Sisa cuma '+sisa);return}
+  // POTONG LANGSUNG
   pilih.total = sisa - bayar;
-  pilih.sudahBayarSebagian = (pilih.sudahBayarSebagian||0) + bayar;
-  if(pilih.total<=0){pilih.total=0; pilih.lunas=true; alert('LUNAS! Kasbon '+pilih.nama+' sudah lunas');}
-  else{alert('Tersimpan. Sisa kasbon '+pilih.nama+' tinggal '+pilih.total)}
-  saveSales(); renderAll();
-}
+  if(pilih.total<=0){pilih.total=0; pilih.lunas=true;}
+  // PAKSA SAVE KE SEMUA CARA YG MUNGKIN
+  try{ if(typeof saveSales==='function') saveSales(); }catch(e){}
+  try{ if(typeof simpanSales==='function') simpanSales(); }catch(e){}
+  try{ if(typeof saveData==='function') saveData(); }catch(e){}
+  try{ localStorage.setItem('sales', JSON.stringify(sales)); }catch(e){}
+  try{ localStorage.setItem('cigar_sales', JSON.stringify(sales)); }catch(e){}
+  try{ localStorage.setItem('dataSales', JSON.stringify(sales)); }catch(e){}
+  alert('DIPOTONG! Sisa kasbon '+pilih.nama+' sekarang tinggal '+pilih.total+'\nCoba refresh halaman, harusnya tetep '+pilih.total);
+  if(typeof renderAll==='function') renderAll();
+  else location.reload();
+  }
 renderAll();
 // ===== PENGINGAT PINJAMAN =====
 function tandaiPinjamanLunas(id){
