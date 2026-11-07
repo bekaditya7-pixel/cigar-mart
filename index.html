@@ -38,8 +38,8 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 .item{border:1px solid #eee;border-radius:10px;padding:10px;margin-top:8px}
 .item b{font-size:14px}
 .item small{color:#777;font-size:12px}
-.actions{display:flex;gap:6px;margin-top:8px}
-.actions button{flex:1;padding:8px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px}
+.actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.actions button{flex:1;padding:8px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px;min-width:90px}
 .total-box{background:#fff3cd;border:1px solid #f5c518;padding:12px;border-radius:10px;margin-top:10px;font-weight:bold}
 .hidden{display:none}
 .badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:bold}
@@ -57,7 +57,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <button id="tabSaldo" onclick="showTab('saldo')">SALDO</button>
 </nav>
 
-<!-- JUAL -->
 <div id="page-jual">
 <div class="card">
 <h3>🧾 Input Penjualan</h3>
@@ -76,7 +75,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <button class="btn btn-dark" id="btnSimpan" onclick="simpan()">💾 SIMPAN PENJUALAN</button>
 <button class="btn btn-gray hidden" id="btnBatalEdit" onclick="batalEdit()">Batal Edit</button>
 </div>
-
 <div class="card" style="background:#111;color:#fff">
 <h3 style="color:#f5c518">📊 TOTAL SEMUA PENJUALAN (DARI AWAL)</h3>
 <div class="kpi">
@@ -89,7 +87,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 </div>
 
-<!-- PEMBUKUAN -->
 <div id="page-buku" class="hidden">
 <div class="card">
 <h3>📚 Pembukuan & Riwayat</h3>
@@ -104,9 +101,8 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 </div>
 
-<!-- KASBON -->
 <div id="page-kasbon" class="hidden">
-<button class="btn btn-green" onclick="bayarKasbonSebagianByNama()" style="margin-bottom:10px">💵 BAYAR SEBAGIAN KASBON (KLIK DI SINI)</button>  
+<button class="btn btn-green" onclick="bayarKasbonSebagianByNama()" style="margin-bottom:10px">💵 BAYAR SEBAGIAN KASBON (KLIK DI SINI)</button>
 <div class="card">
 <h3>📒 Kasbon - Filter Per Nama</h3>
 <label>Cari / Pilih Nama</label>
@@ -117,7 +113,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 </div>
 
-<!-- STOK -->
 <div id="page-stok" class="hidden">
 <div class="card">
 <h3>📦 Stok & Produk</h3>
@@ -129,12 +124,11 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 </div>
 
-<!-- SALDO -->
 <div id="page-saldo" class="hidden">
 <div class="card" style="border:2px solid #e74c3c">
 <h3>🔔 PENGINGAT PINJAMAN BELUM DIBAYAR</h3>
 <div id="listPinjaman">Memuat...</div>
-</div>  
+</div>
 <div class="card" style="background:#111;color:#fff">
 <h3 style="color:#f5c518">💰 LAPORAN SALDO</h3>
 <div class="kpi">
@@ -143,9 +137,8 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div><small>Total Saldo (Cash + QR)</small><b id="saldoTotal">Rp 0</b></div>
 <div><small>Kasbon Belum Lunas</small><b id="saldoKasbon">Rp 0</b></div>
 </div>
-<p style="font-size:12px;color:#ccc">Rumus: Penjualan Tunai + Dana Masuk - Dana Keluar. QR = Penjualan Transfer + Dana Masuk QR - Dana Keluar QR.</p>
+<p style="font-size:12px;color:#ccc">Rumus: Penjualan Tunai + Bayar Kasbon Tunai + Dana Masuk - Dana Keluar. QR = Penjualan Transfer + Bayar Kasbon QR + Dana Masuk QR - Dana Keluar QR.</p>
 </div>
-
 <div class="card">
 <h3>➕ Dana Masuk</h3>
 <label>Tanggal</label><input type="date" id="dmTgl">
@@ -161,7 +154,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <label>Catatan</label><input type="text" id="dmCatatan" placeholder="Opsional">
 <button class="btn btn-green" onclick="simpanDanaMasuk()">💾 SIMPAN DANA MASUK</button>
 </div>
-
 <div class="card">
 <h3>➖ Dana Keluar</h3>
 <label>Tanggal</label><input type="date" id="dkTgl">
@@ -177,7 +169,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <label>Catatan</label><input type="text" id="dkCatatan" placeholder="Contoh: Beli rokok 5 slop">
 <button class="btn btn-red" onclick="simpanDanaKeluar()">💾 SIMPAN DANA KELUAR</button>
 </div>
-
 <div class="card">
 <h3>📋 Riwayat Dana Masuk & Keluar</h3>
 <div class="filter">
@@ -188,9 +179,8 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div class="total-box" id="totalDanaBox">Memuat...</div>
 <div id="listDana"></div>
 </div>
-</div>  
-  <script>
-// ===== DATA =====
+</div>
+<script>
 let sales = JSON.parse(localStorage.getItem('cm_sales')||'[]');
 let products = JSON.parse(localStorage.getItem('cm_products')||'[]');
 if(products.length===0){
@@ -207,10 +197,9 @@ function rp(n){return 'Rp '+(Number(n)||0).toLocaleString('id-ID')}
 function todayStr(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function saveSales(){localStorage.setItem('cm_sales',JSON.stringify(sales))}
 function saveProducts(){localStorage.setItem('cm_products',JSON.stringify(products))}
+function sisaKasbon(s){return Number(s.total||0)-Number(s.dibayar||0)}
 document.getElementById('tgl').value=todayStr();
 document.getElementById('filterTgl').value=todayStr();
-
-// ===== TAB =====
 function showTab(t){
   ['jual','buku','kasbon','stok'].forEach(x=>document.getElementById('page-'+x).classList.add('hidden'));
   document.getElementById('page-'+t).classList.remove('hidden');
@@ -221,8 +210,6 @@ function showTab(t){
   if(t==='stok')document.getElementById('tabStok').classList.add('active');
   renderAll();
 }
-
-// ===== PRODUK =====
 function renderProdukSelect(){
   let sel=document.getElementById('produk'); sel.innerHTML='';
   products.forEach((p,i)=>{let o=document.createElement('option');o.value=i;o.textContent=p.nama+' - '+rp(p.harga)+' (Stok '+p.stok+')';sel.appendChild(o)});
@@ -242,8 +229,6 @@ document.getElementById('harga').addEventListener('input',()=>{
   let h=Number(document.getElementById('harga').value||0);
   document.getElementById('previewTotal').textContent=rp(h*qty);
 });
-
-// ===== SIMPAN / EDIT =====
 function simpan(){
   let tgl=document.getElementById('tgl').value||todayStr();
   let nama=(document.getElementById('nama').value||'Umum').trim()||'Umum';
@@ -260,8 +245,7 @@ function simpan(){
     editId=null; document.getElementById('btnSimpan').textContent='💾 SIMPAN PENJUALAN'; document.getElementById('btnBatalEdit').classList.add('hidden');
     alert('Berhasil di-UPDATE!');
   } else {
-    sales.unshift({id:Date.now(),tgl,nama,produk:p.nama,harga,qty,total,untung,bayar,catatan,modal:p.modal,lunas:(bayar!=='Kasbon')});
-    // kurangi stok
+    sales.unshift({id:Date.now(),tgl,nama,produk:p.nama,harga,qty,total,untung,bayar,catatan,modal:p.modal,lunas:(bayar!=='Kasbon'),dibayar:0,riwayatBayar:[]});
     p.stok=Math.max(0,p.stok-qty); saveProducts();
   }
   saveSales(); resetForm(); renderAll(); showTab('buku');
@@ -288,8 +272,6 @@ function notaWA(id){
   let txt='*CIGAR MART*%0A'+s.tgl+' - '+s.nama+'%0A'+s.produk+' x'+s.qty+' = '+rp(s.total)+'%0A Bayar: '+s.bayar+(s.bayar==='Kasbon'?' (KASBON)':'');
   window.open('https://wa.me/?text='+txt,'_blank');
 }
-
-// ===== FILTER PEMBUKUAN =====
 function setFilter(m){
   filterMode=m;
   document.getElementById('fAll').classList.toggle('active',m==='all');
@@ -301,55 +283,47 @@ function getFiltered(){
   if(filterMode==='pick'){let d=document.getElementById('filterTgl').value; return sales.filter(s=>s.tgl===d);}
   return sales;
 }
-
-// ===== RENDER PEMBUKUAN =====
 function renderBuku(){
   let list=getFiltered();
   let omset=list.reduce((a,s)=>a+s.total,0);
   let untung=list.reduce((a,s)=>a+s.untung,0);
   let bungkus=list.reduce((a,s)=>a+s.qty,0);
-  let kasbonBelum=list.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  let kasbonBelum=list.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);
   document.getElementById('rekapFilter').innerHTML='Omset: '+rp(omset)+' | Untung: '+rp(untung)+' | Transaksi: '+list.length+'x | Bungkus: '+bungkus+' | Kasbon Belum Lunas: '+rp(kasbonBelum);
   let html=list.length===0?'<p style="color:#888">Belum ada penjualan di filter ini.</p>':'';
   list.forEach(s=>{
-    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b><br><small>'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</small><br><b>'+rp(s.total)+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span><br><small>Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</small><div class="actions"><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#eee" onclick="notaWA('+s.id+')">Nota WA</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button>'+(s.bayar==='Kasbon'?'<button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button>':'')+'</div></div>';
+    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b><br><small>'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</small><br><b>'+rp(s.total)+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span>'+(s.bayar==='Kasbon'?'<br><small>Sudah dibayar: '+rp(s.dibayar||0)+' | Sisa: '+rp(sisaKasbon(s))+'</small>':'')+'<br><small>Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</small><div class="actions"><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#eee" onclick="notaWA('+s.id+')">Nota WA</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button>'+(s.bayar==='Kasbon'&&!s.lunas?'<button style="background:#111;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 BAYAR TUNAI</button><button style="background:#0088ff;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 BAYAR QR</button><button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">Tandai Lunas</button>':'')+'</div></div>';
   });
   document.getElementById('listRiwayat').innerHTML=html;
 }
-function toggleLunas(id){let s=sales.find(x=>x.id===id); if(s){s.lunas=!s.lunas; saveSales(); renderAll();}}
-
-// ===== KASBON FILTER PER NAMA =====
+function toggleLunas(id){let s=sales.find(x=>x.id===id); if(s){s.lunas=!s.lunas; if(s.lunas) s.dibayar=s.total; saveSales(); renderAll();}}
 function pilihNamaKasbon(){
   let v=document.getElementById('pilihNama').value;
   document.getElementById('cariNama').value=v;
   renderKasbon();
 }
 function renderKasbon(){
-  // isi dropdown nama unik
   let names=[...new Set(sales.filter(s=>s.bayar==='Kasbon').map(s=>s.nama))].sort();
   let sel=document.getElementById('pilihNama');
   let cur=sel.value;
   sel.innerHTML='<option value="">-- Semua Nama --</option>';
   names.forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
   if(names.includes(cur)) sel.value=cur;
-  // filter
   let q=(document.getElementById('cariNama').value||'').toLowerCase().trim();
   let list=sales.filter(s=>s.bayar==='Kasbon');
   if(q) list=list.filter(s=>s.nama.toLowerCase().includes(q));
-  // TOTAL PER NAMA YANG TAMPIL
   let totalSemua=list.reduce((a,s)=>a+s.total,0);
-  let belum=list.filter(s=>!s.lunas).reduce((a,s)=>a+s.total,0);
+  let belum=list.filter(s=>!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);
   let lunas=list.filter(s=>s.lunas).reduce((a,s)=>a+s.total,0);
   let namaTampil=q?('Nama: <b>'+q+'</b>'):'Semua Nama Kasbon';
   document.getElementById('totalKasbonNama').innerHTML=namaTampil+'<br>Total Kasbon: '+rp(totalSemua)+'<br>Belum Lunas: <span style="color:#c00">'+rp(belum)+'</span> | Sudah Lunas: <span style="color:#27ae60">'+rp(lunas)+'</span><br>Jumlah Transaksi: '+list.length+'x';
   let html=list.length===0?'<p style="color:#888">Tidak ada kasbon untuk nama ini.</p>':'';
   list.forEach(s=>{
-    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span><br><small>'+s.produk+' x'+s.qty+'</small><br><b>'+rp(s.total)+'</b><div class="actions"><button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div>';
+    let rincian=(s.riwayatBayar&&s.riwayatBayar.length)?'<br><small style="color:#555"><b>RINCIAN BAYAR:</b><br>'+s.riwayatBayar.map(r=>r.tgl+' - '+(r.metode==='Tunai'?'💵 TUNAI':'📱 QR')+' - '+rp(r.nominal)).join('<br>')+'</small>':'';
+    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span><br><small>'+s.produk+' x'+s.qty+'</small><br><b>Total: '+rp(s.total)+' | Sudah dibayar: '+rp(s.dibayar||0)+' | Sisa: '+rp(sisaKasbon(s))+'</b>'+rincian+'<div class="actions">'+(s.lunas?'':'<button style="background:#111;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 BAYAR TUNAI</button><button style="background:#0088ff;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 BAYAR QR</button>')+'<button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div>';
   });
   document.getElementById('listKasbon').innerHTML=html;
 }
-
-// ===== STOK =====
 function tambahProduk(){
   let n=document.getElementById('newNama').value.trim(); if(!n){alert('Isi nama produk');return}
   products.push({nama:n,harga:Number(document.getElementById('newHarga').value||0),modal:Number(document.getElementById('newModal').value||0),stok:Number(document.getElementById('newStok').value||0)});
@@ -364,14 +338,12 @@ function renderStok(){
 }
 function tambahStok(i){products[i].stok+=10; saveProducts(); renderAll();}
 function hapusProduk(i){if(confirm('Hapus produk ini?')){products.splice(i,1); saveProducts(); renderAll();}}
-
-// ===== KPI ALL TIME =====
 function renderKPI(){
   let omsetAll=sales.reduce((a,s)=>a+s.total,0);
   let untungAll=sales.reduce((a,s)=>a+s.untung,0);
   let bungkusAll=sales.reduce((a,s)=>a+s.qty,0);
   let omsetToday=sales.filter(s=>s.tgl===todayStr()).reduce((a,s)=>a+s.total,0);
-  let kasbonAll=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  let kasbonAll=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);
   document.getElementById('kpiOmsetAll').textContent=rp(omsetAll);
   document.getElementById('kpiUntungAll').textContent=rp(untungAll);
   document.getElementById('kpiTrxAll').textContent=sales.length;
@@ -380,7 +352,6 @@ function renderKPI(){
   document.getElementById('kpiKasbonAll').textContent=rp(kasbonAll);
 }
 function renderAll(){renderProdukSelect();renderKPI();renderBuku();renderKasbon();renderStok();renderSaldo();}
-// ===== SALDO & DANA =====
 let dana = JSON.parse(localStorage.getItem('cm_dana')||'[]');
 let filterDanaMode='all';
 function saveDana(){localStorage.setItem('cm_dana',JSON.stringify(dana))}
@@ -403,13 +374,16 @@ function renderSaldo(){
   document.getElementById('dmTgl').value=todayStr(); document.getElementById('dkTgl').value=todayStr();
   let tunaiJual=sales.filter(s=>s.bayar==='Tunai').reduce((a,s)=>a+s.total,0);
   let qrJual=sales.filter(s=>s.bayar==='Transfer').reduce((a,s)=>a+s.total,0);
+  let kasbonTunai=0, kasbonQR=0;
+  sales.forEach(s=>{ if(s.riwayatBayar){ s.riwayatBayar.forEach(r=>{ if(r.metode==='Tunai') kasbonTunai+=Number(r.nominal||0); else kasbonQR+=Number(r.nominal||0); }); } });
+  tunaiJual+=kasbonTunai; qrJual+=kasbonQR;
   let masukCash=dana.filter(d=>d.tipe==='masuk'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0);
   let masukQR=dana.filter(d=>d.tipe==='masuk'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0);
   let keluarCash=dana.filter(d=>d.tipe==='keluar'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0);
   let keluarQR=dana.filter(d=>d.tipe==='keluar'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0);
   let saldoCash=tunaiJual+masukCash-keluarCash;
   let saldoQR=qrJual+masukQR-keluarQR;
-  let kasbonBelum=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+s.total,0);
+  let kasbonBelum=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);
   document.getElementById('saldoCash').textContent=rp(saldoCash);
   document.getElementById('saldoQR').textContent=rp(saldoQR);
   document.getElementById('saldoTotal').textContent=rp(saldoCash+saldoQR);
@@ -427,7 +401,6 @@ function renderSaldo(){
   document.getElementById('btnDanaMasuk').classList.toggle('active',filterDanaMode==='masuk');
   document.getElementById('btnDanaKeluar').classList.toggle('active',filterDanaMode==='keluar');
 }
-// biar tab saldo kebuka
 let _oldShowTab=showTab;
 showTab=function(t){
   ['jual','buku','kasbon','stok','saldo'].forEach(x=>{let el=document.getElementById('page-'+x); if(el) el.classList.add('hidden')});
@@ -436,40 +409,38 @@ showTab=function(t){
   let tb={jual:'tabJual',buku:'tabBuku',kasbon:'tabKasbon',stok:'tabStok',saldo:'tabSaldo'}[t]; if(tb) document.getElementById(tb).classList.add('active');
   renderAll();
 };
-// BAYAR SEBAGIAN KASBON - CARA NAMA
 function bayarKasbonSebagianByNama(){
   let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Sujai');
   if(!nama) return;
-  // cari Sujai dengan cara paling longgar
-  let s=sales.filter(x=>!x.lunas && x.nama.toLowerCase().includes(nama.toLowerCase()));
-  if(s.length===0){alert('Gak ketemu kasbon '+nama+' - Coba cek tulisan namanya, huruf besar kecilnya harus sama');return}
-  let pilih=s[0];
-  if(s.length>1){
-    let teks=s.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+x.total).join('\n');
+  let list=sales.filter(x=>x.bayar==='Kasbon'&&!x.lunas && x.nama.toLowerCase().includes(nama.toLowerCase()));
+  if(list.length===0){alert('Gak ketemu kasbon '+nama);return}
+  let pilih=list[0];
+  if(list.length>1){
+    let teks=list.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+rp(sisaKasbon(x))).join('\n');
     let no=Number(prompt('Pilih nomornya:\n'+teks,'1'));
     if(!no) return;
-    pilih=s[no-1];
+    pilih=list[no-1];
   }
-  let sisa=Number(pilih.total);
-  let bayar=Number(prompt('Kasbon '+pilih.nama+'\nSisa: '+sisa+'\n\nMau bayar berapa sekarang?',''));
+  let m=prompt('Bayar pakai apa?\nKetik 1 = 💵 TUNAI\nKetik 2 = 📱 QR / TRANSFER','1');
+  if(m!=='1' && m!=='2'){alert('Pilih 1 untuk Tunai atau 2 untuk QR');return}
+  bayarKasbonPerItem(pilih.id, m==='1'?'Tunai':'Transfer');
+}
+function bayarKasbonPerItem(id, metode){
+  let s=sales.find(x=>x.id===id); if(!s) return;
+  let sisa=sisaKasbon(s);
+  if(sisa<=0){alert('Kasbon ini sudah lunas');return}
+  let bayar=Number(prompt('Kasbon '+s.nama+'\nTotal: '+rp(s.total)+'\nSisa: '+rp(sisa)+'\n\nBayar via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nMau bayar berapa sekarang?',''));
   if(!bayar||bayar<=0){alert('Jumlah salah');return}
-  if(bayar>sisa){alert('Kelebihan! Sisa cuma '+sisa);return}
-  // POTONG LANGSUNG
-  pilih.total = sisa - bayar;
-  if(pilih.total<=0){pilih.total=0; pilih.lunas=true;}
-  // PAKSA SAVE KE SEMUA CARA YG MUNGKIN
-  try{ if(typeof saveSales==='function') saveSales(); }catch(e){}
-  try{ if(typeof simpanSales==='function') simpanSales(); }catch(e){}
-  try{ if(typeof saveData==='function') saveData(); }catch(e){}
-  try{ localStorage.setItem('sales', JSON.stringify(sales)); }catch(e){}
-  try{ localStorage.setItem('cigar_sales', JSON.stringify(sales)); }catch(e){}
-  try{ localStorage.setItem('dataSales', JSON.stringify(sales)); }catch(e){}
-  alert('DIPOTONG! Sisa kasbon '+pilih.nama+' sekarang tinggal '+pilih.total+'\nCoba refresh halaman, harusnya tetep '+pilih.total);
-  if(typeof renderAll==='function') renderAll();
-  else location.reload();
-  }
+  if(bayar>sisa){alert('Kelebihan! Sisa cuma '+rp(sisa));return}
+  if(!s.riwayatBayar) s.riwayatBayar=[];
+  s.riwayatBayar.push({tgl:todayStr(), nominal:bayar, metode:metode});
+  s.dibayar=(Number(s.dibayar||0))+bayar;
+  if(s.dibayar>=s.total){ s.lunas=true; }
+  saveSales();
+  alert('Tercatat! '+s.nama+' bayar '+rp(bayar)+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nSisa tinggal '+rp(s.total-s.dibayar)+'\nSaldo '+(metode==='Tunai'?'Cash':'QR')+' otomatis nambah.');
+  renderAll();
+}
 renderAll();
-// ===== PENGINGAT PINJAMAN =====
 function tandaiPinjamanLunas(id){
   let d=dana.find(x=>x.id===id); if(!d) return;
   if(confirm('Pinjaman "'+d.ket+'" sebesar '+rp(d.jumlah)+' sudah dibayar lunas?')){d.lunasPinjam=true; saveDana(); renderAll();}
@@ -485,9 +456,8 @@ function renderPinjaman(){
   });
   el.innerHTML=html;
 }
-// biar pengingat pinjaman ikut ke-render tiap buka saldo
 let _oldRenderSaldo2=renderSaldo;
-renderSaldo=function(){_oldRenderSaldo2(); renderPinjaman();};    
+renderSaldo=function(){_oldRenderSaldo2(); renderPinjaman();};
 </script>
 </body>
 </html>
