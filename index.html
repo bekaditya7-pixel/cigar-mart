@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#111111">
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f2f2f2;padding-bottom:80px}
+body{margin:0;background:#f2f2f2;padding-bottom:110px}
 header{background:#111;color:#fff;padding:14px;text-align:center;position:sticky;top:0;z-index:10}
 header h1{margin:0;font-size:20px;letter-spacing:1px}
 header p{margin:2px 0 0;font-size:12px;color:#f5c518}
@@ -62,6 +62,15 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 .drop-menu button:active{background:#f5f5f5}
 .drop-menu .danger{color:#e74c3c}
 .mini-actions{display:flex;gap:6px;margin-top:7px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#fff;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:16px;max-height:88vh;overflow:auto}
+.modal-box textarea{height:260px;font-size:14px;line-height:1.55;white-space:pre-wrap}
+.main-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#111;color:#fff;text-align:center;padding:10px 12px 12px;border-top:2px solid #f5c518}
+.main-footer b{font-size:13px;letter-spacing:1px}
+.main-footer .tagline{font-size:11px;color:#f5c518;margin:2px 0 4px;font-style:italic}
+.main-footer .copy{font-size:11px;color:#bbb;line-height:1.5}
+.main-footer .copy b{font-size:11px;color:#fff;letter-spacing:0}
 </style>
 </head>
 <body>
@@ -73,7 +82,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <button id="tabStok" onclick="showTab('stok')">STOK</button>
 <button id="tabSaldo" onclick="showTab('saldo')">SALDO</button>
 </nav>
-
 <div id="page-jual">
 <div class="card">
 <h3>🧾 Input Penjualan</h3>
@@ -103,7 +111,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <p style="font-size:12px;color:#ccc;margin:10px 0 0">Omset Hari Ini: <b id="kpiOmsetToday" style="color:#f5c518">Rp 0</b> • Kasbon Belum Lunas (Semua): <b id="kpiKasbonAll" style="color:#ff8a8a">Rp 0</b></p>
 </div>
 </div>
-
 <div id="page-buku" class="hidden">
 <div class="card">
 <h3>📚 Pembukuan & Riwayat</h3>
@@ -117,7 +124,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div id="listRiwayat"></div>
 </div>
 </div>
-
 <div id="page-kasbon" class="hidden">
 <div class="card">
 <h3>📒 Kasbon - Filter Per Nama</h3>
@@ -128,7 +134,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div id="listKasbon"></div>
 </div>
 </div>
-
 <div id="page-stok" class="hidden">
 <div class="card">
 <h3>📦 Stok & Produk</h3>
@@ -139,7 +144,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div id="listStok"></div>
 </div>
 </div>
-
 <div id="page-saldo" class="hidden">
 <div class="card" style="border:2px solid #e74c3c">
 <h3>🔔 PENGINGAT PINJAMAN BELUM DIBAYAR</h3>
@@ -196,6 +200,18 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 <div id="listDana"></div>
 </div>
 </div>
+<div id="modalNota" class="modal"><div class="modal-box">
+<h3 style="margin:0 0 6px">✏️ Edit Nota Sebelum Kirim</h3>
+<p style="font-size:12px;color:#777;margin:0 0 8px">Aa bisa edit bebas di bawah ini, lalu klik Kirim ke WA.</p>
+<textarea id="notaEdit"></textarea>
+<button class="btn btn-green" onclick="kirimNotaWA()">📩 KIRIM KE WA</button>
+<button class="btn btn-gray" onclick="tutupNota()">Batal</button>
+</div></div>
+<footer class="main-footer">
+<b>🚬 CIGAR MART</b>
+<div class="tagline">Dapur tetap ngebul, mulut masih ngebul</div>
+<div class="copy">© 2026 Bagja Eka Aprianto<br>_Hak Dilindungi_</div>
+</footer>
 <script>
 let sales = JSON.parse(localStorage.getItem('cm_sales')||'[]');
 let products = JSON.parse(localStorage.getItem('cm_products')||'[]');
@@ -285,8 +301,30 @@ function hapusTransaksi(id){
 }
 function notaWA(id){
   let s=sales.find(x=>x.id===id); if(!s)return;
-  let txt='*CIGAR MART*%0A'+s.tgl+' - '+s.nama+'%0A'+s.produk+' x'+s.qty+' = '+rp(s.total)+'%0A Bayar: '+s.bayar+(s.bayar==='Kasbon'?' (KASBON)':'');
-  window.open('https://wa.me/?text='+txt,'_blank');
+  let bayarTxt = '';
+  if(s.bayar==='Kasbon'){
+    bayarTxt = s.lunas ? 'Kasbon (Lunas)' : 'Kasbon (Belum Lunas) - Sisa '+rp(sisaKasbon(s));
+  } else if(s.bayar==='Transfer'){
+    bayarTxt = 'Transfer / QR';
+  } else {
+    bayarTxt = 'Tunai';
+  }
+  let txt = '*CIGAR MART*\n';
+  txt += s.tgl+' - '+s.nama+'\n';
+  txt += s.produk+' x'+s.qty+' = '+rp(s.total)+'\n';
+  txt += ' Bayar: '+bayarTxt+'\n';
+  txt += '\n';
+  txt += '_Terimakasih telah berbelanja_\n';
+  txt += '\n';
+  txt += '*Dapur tetap ngebul, mulut masih ngebul*';
+  document.getElementById('notaEdit').value = txt;
+  document.getElementById('modalNota').classList.add('open');
+}
+function tutupNota(){ document.getElementById('modalNota').classList.remove('open'); }
+function kirimNotaWA(){
+  let txt = document.getElementById('notaEdit').value;
+  tutupNota();
+  window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
 }
 function setFilter(m){
   filterMode=m;
@@ -306,7 +344,7 @@ function toggleDrop(el, ev){
   document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open'));
   if(!wasOpen) menu.classList.add('open');
 }
-document.addEventListener('click', ()=>{ document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open')); });
+document.addEventListener('click', (e)=>{ if(!e.target.closest('.modal-box')){ document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open')); } });
 function renderBuku(){
   let list=getFiltered();
   let omset=list.reduce((a,s)=>a+s.total,0);
@@ -457,12 +495,10 @@ function bayarKasbonSebagian(id){
   let s=sales.find(x=>x.id===id); if(!s) return;
   let sisa=sisaKasbon(s);
   if(sisa<=0){alert('Kasbon ini sudah lunas');return}
-  // 1. PILIH METODE DULU - INI YANG DITAMBAH
   let m=prompt('BAYAR SEBAGIAN - '+s.nama+'\nSisa: '+rp(sisa)+'\n\nPilih METODE BAYAR:\nKetik 1 = 💵 TUNAI / CASH\nKetik 2 = 📱 QR / TRANSFER','1');
   if(m!=='1' && m!=='2'){alert('Pilih 1 untuk TUNAI atau 2 untuk QR');return}
   let metode = m==='1'?'Tunai':'Transfer';
   let labelMetode = m==='1'?'💵 TUNAI / CASH':'📱 QR / TRANSFER';
-  // 2. BARU ISI NOMINAL
   let bayar=Number(prompt('Metode: '+labelMetode+'\nKasbon '+s.nama+'\nSisa: '+rp(sisa)+'\n\nMau bayar SEBAGIAN berapa sekarang?',''));
   if(!bayar||bayar<=0){alert('Jumlah salah');return}
   if(bayar>sisa){alert('Kelebihan! Sisa cuma '+rp(sisa));return}
