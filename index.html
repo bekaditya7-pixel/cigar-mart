@@ -1,484 +1,75 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cigar Mart - POS</title>
-<meta name="theme-color" content="#111111">
-<style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f2f2f2;padding-bottom:120px}
-header{background:#111;color:#fff;padding:14px;text-align:center;position:sticky;top:0;z-index:10}
-header h1{margin:0;font-size:20px;letter-spacing:1px}
-header p{margin:2px 0 0;font-size:12px;color:#f5c518}
-nav{display:flex;background:#fff;position:sticky;top:58px;z-index:9;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-nav button{flex:1;padding:12px 4px;border:0;background:#fff;font-weight:bold;cursor:pointer;font-size:13px}
-nav button.active{background:#111;color:#fff}
-.card{background:#fff;margin:12px;border-radius:12px;padding:14px;box-shadow:0 1px 5px rgba(0,0,0,.08)}
-.card h3{margin:0 0 10px;font-size:15px}
-label{font-size:12px;font-weight:bold;color:#555;display:block;margin-top:10px}
-input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #ddd;border-radius:8px;font-size:14px}
-.row{display:flex;gap:8px}
-.row>*{flex:1}
-.btn{width:100%;padding:12px;border:0;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:12px;font-size:15px}
-.btn-dark{background:#111;color:#fff}
-.btn-yellow{background:#f5c518;color:#111}
-.btn-red{background:#e74c3c;color:#fff}
-.btn-green{background:#27ae60;color:#fff}
-.btn-gray{background:#eee;color:#111}
-.btn-blue{background:#2196F3;color:#fff}
-.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi div{background:#111;color:#fff;padding:12px;border-radius:10px}
-.kpi div.yellow{background:#f5c518;color:#111}
-.kpi small{font-size:11px;opacity:.8}
-.kpi b{font-size:18px;display:block;margin-top:4px}
-.filter{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-.filter button{padding:8px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;font-weight:bold}
-.filter button.active{background:#111;color:#fff}
-.item{border:1px solid #eee;border-radius:10px;padding:10px;margin-top:8px}
-.item b{font-size:14px}
-.item small{color:#777;font-size:12px}
-.actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.actions button{flex:1;padding:8px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px;min-width:90px}
-.total-box{background:#fff3cd;border:1px solid #f5c518;padding:12px;border-radius:10px;margin-top:10px;font-weight:bold}
-.hidden{display:none}
-.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:bold}
-.badge-lunas{background:#d4edda;color:#155724}
-.badge-belum{background:#f8d7da;color:#721c24}
-.item-compact{border:1px solid #eee;border-radius:10px;padding:8px 10px;margin-top:8px;background:#fff}
-.item-compact .top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
-.item-compact .top b{font-size:13px;line-height:1.3}
-.item-compact .sub{font-size:12px;color:#777;margin-top:1px}
-.item-compact .mid{font-size:12.5px;margin-top:3px;line-height:1.35}
-.item-compact .mid b{font-size:13px}
-.drop{position:relative}
-.drop-btn{padding:7px 10px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px;white-space:nowrap}
-.btn-bayar{background:#111;color:#fff}
-.btn-dot{background:#eee;color:#111;padding:7px 11px;font-size:15px;line-height:1}
-.drop-menu{position:absolute;right:0;top:36px;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);min-width:160px;z-index:50;overflow:hidden;display:none}
-.drop-menu.open{display:block}
-.drop-menu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:11px 12px;font-size:13px;font-weight:bold;cursor:pointer;border-bottom:1px solid #f0f0f0}
-.drop-menu button:last-child{border-bottom:0}
-.drop-menu .danger{color:#e74c3c}
-.mini-actions{display:flex;gap:6px;margin-top:7px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:none;align-items:flex-end;justify-content:center}
-.modal.open{display:flex}
-.modal-box{background:#fff;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:16px;max-height:88vh;overflow:auto}
-.modal-box textarea{height:220px;font-size:14px;line-height:1.55;white-space:pre-wrap;text-align:center}
-.main-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#111;color:#fff;text-align:center;padding:10px 12px 12px;border-top:2px solid #f5c518}
-.main-footer b{font-size:13px;letter-spacing:1px}
-.main-footer .tagline{font-size:11px;color:#f5c518;margin:2px 0 4px;font-style:italic}
-.main-footer .copy{font-size:11px;color:#bbb;line-height:1.5}
-</style>
-</head>
-<body>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cigar Mart - POS</title><style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}body{margin:0;background:#f2f2f2;padding-bottom:120px}header{background:#111;color:#fff;padding:14px;text-align:center;position:sticky;top:0;z-index:10}header h1{margin:0;font-size:20px}header p{margin:2px 0 0;font-size:12px;color:#f5c518}
+nav{display:flex;background:#fff;position:sticky;top:58px;z-index:9}nav button{flex:1;padding:12px 4px;border:0;background:#fff;font-weight:bold;cursor:pointer;font-size:13px}nav button.active{background:#111;color:#fff}
+.card{background:#fff;margin:12px;border-radius:12px;padding:14px}label{font-size:12px;font-weight:bold;color:#555;display:block;margin-top:10px}input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #ddd;border-radius:8px;font-size:14px}.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{width:100%;padding:12px;border:0;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:12px;font-size:15px}.btn-dark{background:#111;color:#fff}.btn-yellow{background:#f5c518}.btn-red{background:#e74c3c;color:#fff}.btn-green{background:#27ae60;color:#fff}.btn-gray{background:#eee}.btn-blue{background:#2196F3;color:#fff}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kpi div{background:#111;color:#fff;padding:12px;border-radius:10px}.kpi div.yellow{background:#f5c518;color:#111}.kpi small{font-size:11px}.kpi b{font-size:18px;display:block}
+.filter{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.filter button{padding:8px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;font-weight:bold}.filter button.active{background:#111;color:#fff}
+.item{border:1px solid #eee;border-radius:10px;padding:10px;margin-top:8px}.item small{color:#777}.actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.actions button{flex:1;padding:8px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px}
+.total-box{background:#fff3cd;border:1px solid #f5c518;padding:12px;border-radius:10px;margin-top:10px;font-weight:bold}.hidden{display:none}.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:bold}.badge-lunas{background:#d4edda;color:#155724}.badge-belum{background:#f8d7da;color:#721c24}
+.item-compact{border:1px solid #eee;border-radius:10px;padding:8px 10px;margin-top:8px;background:#fff}.item-compact .top{display:flex;justify-content:space-between;gap:6px}.item-compact .sub{font-size:12px;color:#777}.item-compact .mid{font-size:12.5px;margin-top:3px}
+.drop{position:relative}.drop-btn{padding:7px 10px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px}.btn-bayar{background:#111;color:#fff}.btn-dot{background:#eee;padding:7px 11px;font-size:15px}
+.drop-menu{position:absolute;right:0;top:36px;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);min-width:160px;z-index:50;display:none;overflow:hidden}.drop-menu.open{display:block}.drop-menu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:11px 12px;font-size:13px;font-weight:bold;cursor:pointer;border-bottom:1px solid #f0f0f0}.drop-menu .danger{color:#e74c3c}.mini-actions{display:flex;gap:6px;margin-top:7px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:none;align-items:flex-end;justify-content:center}.modal.open{display:flex}.modal-box{background:#fff;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:16px;max-height:88vh;overflow:auto}.modal-box textarea{height:180px;line-height:1.55;text-align:center!important}
+.main-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#111;color:#fff;text-align:center;padding:10px;border-top:2px solid #f5c518}.main-footer .tagline{font-size:11px;color:#f5c518}.main-footer .copy{font-size:11px;color:#bbb}
+</style></head><body>
 <header><h1>🚬 CIGAR MART</h1><p>POS • Pembukuan • Kasbon</p></header>
-<nav>
-<button id="tabJual" class="active" onclick="showTab('jual')">JUAL</button>
-<button id="tabBuku" onclick="showTab('buku')">PEMBUKUAN</button>
-<button id="tabKasbon" onclick="showTab('kasbon')">KASBON</button>
-<button id="tabStok" onclick="showTab('stok')">STOK</button>
-<button id="tabSaldo" onclick="showTab('saldo')">SALDO</button>
-</nav>
-
-<div id="page-jual">
-<div class="card">
-<h3>🧾 Input Penjualan</h3>
-<label>Tanggal Transaksi</label><input type="date" id="tgl">
-<label>Nama Pembeli</label><input type="text" id="nama" placeholder="Contoh: Budi / Umum">
-<label>Produk</label><select id="produk"></select>
-<label>Harga / Bungkus</label><input type="number" id="harga" placeholder="0">
-<div class="row"><div><label>Jumlah (Bungkus)</label><input type="number" id="qty" value="1" min="1"></div>
-<div><label>Metode Bayar</label><select id="bayar"><option value="Tunai">Tunai</option><option value="Kasbon">Kasbon</option><option value="Transfer">Transfer</option></select></div></div>
-<label>Catatan</label><input type="text" id="catatan" placeholder="Opsional">
-<div class="card" style="margin:12px 0 0;background:#f9f9f9"><b>Total: <span id="previewTotal">Rp 0</span></b> • <span id="previewUntung">Untung: Rp 0</span></div>
-<button class="btn btn-dark" id="btnSimpan" onclick="simpan()">💾 SIMPAN PENJUALAN</button>
-<button class="btn btn-gray hidden" id="btnBatalEdit" onclick="batalEdit()">Batal Edit</button>
-</div>
-<div class="card" style="background:#111;color:#fff">
-<h3 style="color:#f5c518">📊 TOTAL SEMUA PENJUALAN (DARI AWAL)</h3>
-<div class="kpi">
-<div class="yellow"><small>Total Omset Semua</small><b id="kpiOmsetAll">Rp 0</b></div>
-<div><small>Total Untung Semua</small><b id="kpiUntungAll">Rp 0</b></div>
-<div><small>Total Transaksi</small><b id="kpiTrxAll">0</b></div>
-<div><small>Total Bungkus Terjual</small><b id="kpiBungkusAll">0</b></div>
-</div>
-<p style="font-size:12px;color:#ccc;margin:10px 0 0">Omset Hari Ini: <b id="kpiOmsetToday" style="color:#f5c518">Rp 0</b> • Kasbon Belum Lunas: <b id="kpiKasbonAll" style="color:#ff8a8a">Rp 0</b></p>
-</div>
-</div>
-
-<div id="page-buku" class="hidden">
-<div class="card"><h3>📚 Pembukuan & Riwayat</h3>
-<div class="filter">
-<button id="fAll" class="active" onclick="setFilter('all')">Semua Tanggal</button>
-<button id="fToday" onclick="setFilter('today')">Hari Ini</button>
-<button onclick="setFilter('pick')">Pilih Tanggal</button>
-<input type="date" id="filterTgl" style="width:150px" onchange="setFilter('pick')">
-</div>
-<div class="total-box" id="rekapFilter">Memuat...</div>
-<div id="listRiwayat"></div>
-</div></div>
-
-<div id="page-kasbon" class="hidden">
-<div class="card"><h3>📒 Kasbon - Filter Per Nama</h3>
-<label>Cari / Pilih Nama</label>
-<input type="text" id="cariNama" placeholder="Ketik nama..." oninput="renderKasbon()">
-<select id="pilihNama" onchange="pilihNamaKasbon()"><option value="">-- Semua Nama --</option></select>
-<div class="total-box" id="totalKasbonNama">Pilih nama untuk lihat totalnya</div>
-<div id="listKasbon"></div>
-</div></div>
-
-<div id="page-stok" class="hidden">
-<div class="card"><h3>📦 Stok & Produk</h3>
-<label>Nama Produk Baru</label><input type="text" id="newNama" placeholder="Contoh: Gudang Garam Filter">
-<div class="row"><div><label>Harga Jual</label><input type="number" id="newHarga" placeholder="0"></div><div><label>Modal / Bungkus</label><input type="number" id="newModal" placeholder="0"></div></div>
-<label>Stok Awal</label><input type="number" id="newStok" placeholder="0">
-<button class="btn btn-yellow" onclick="tambahProduk()">+ TAMBAH PRODUK</button>
-<div id="listStok"></div>
-</div></div>
-
-<div id="page-saldo" class="hidden">
-<div class="card" style="border:2px solid #e74c3c"><h3>🔔 PENGINGAT PINJAMAN BELUM DIBAYAR</h3><div id="listPinjaman">Memuat...</div></div>
-<div class="card" style="background:#111;color:#fff"><h3 style="color:#f5c518">💰 LAPORAN SALDO</h3>
-<div class="kpi">
-<div class="yellow"><small>Uang Cash (Tunai)</small><b id="saldoCash">Rp 0</b></div>
-<div><small>Uang QR / Transfer</small><b id="saldoQR">Rp 0</b></div>
-<div><small>Total Saldo (Cash + QR)</small><b id="saldoTotal">Rp 0</b></div>
-<div><small>Kasbon Belum Lunas</small><b id="saldoKasbon">Rp 0</b></div>
-</div></div>
-<div class="card"><h3>➕ Dana Masuk</h3>
-<label>Tanggal</label><input type="date" id="dmTgl">
-<label>Jumlah</label><input type="number" id="dmJumlah" placeholder="0">
-<label>Keterangan</label><select id="dmKet" onchange="cekPinjam()"><option value="Uang modal">Uang modal</option><option value="Pinjam dana dari...">Pinjam dana dari...</option><option value="Kelebihan">Kelebihan</option></select>
-<div id="boxPinjam" class="hidden"><label>Pinjam Dana Dari Siapa?</label><input type="text" id="dmPinjamDari" placeholder="Contoh: Pinjam dari Budi"></div>
-<label>Metode Masuk Ke</label><select id="dmMetode"><option value="Cash">Cash / Tunai</option><option value="QR">QR / Transfer</option></select>
-<label>Catatan</label><input type="text" id="dmCatatan" placeholder="Opsional">
-<button class="btn btn-green" onclick="simpanDanaMasuk()">💾 SIMPAN DANA MASUK</button></div>
-<div class="card"><h3>➖ Dana Keluar</h3>
-<label>Tanggal</label><input type="date" id="dkTgl">
-<label>Jumlah</label><input type="number" id="dkJumlah" placeholder="0">
-<label>Keterangan</label><select id="dkKet"><option value="Belanja stock">Belanja stock</option><option value="Operasional">Operasional</option><option value="Lain lain">Lain lain</option><option value="Komisi">Komisi</option></select>
-<label>Metode Keluar Dari</label><select id="dkMetode"><option value="Cash">Cash / Tunai</option><option value="QR">QR / Transfer</option></select>
-<label>Catatan</label><input type="text" id="dkCatatan" placeholder="Contoh: Beli rokok 5 slop">
-<button class="btn btn-red" onclick="simpanDanaKeluar()">💾 SIMPAN DANA KELUAR</button></div>
-<div class="card"><h3>📋 Riwayat Dana Masuk & Keluar</h3>
-<div class="filter"><button class="active" id="btnDanaAll" onclick="filterDana('all')">Semua</button><button id="btnDanaMasuk" onclick="filterDana('masuk')">Dana Masuk</button><button id="btnDanaKeluar" onclick="filterDana('keluar')">Dana Keluar</button></div>
-<div class="total-box" id="totalDanaBox">Memuat...</div><div id="listDana"></div></div>
-</div>
-
-<div id="modalNota" class="modal"><div class="modal-box">
-<h3 style="margin:0 0 6px;text-align:center">✏️ Edit Nota Sebelum Kirim</h3>
-<p style="font-size:12px;color:#777;margin:0 0 8px;text-align:center">Nota sudah rata tengah. Aa bisa edit, lalu download PNG / JPG.</p>
-<textarea id="notaEdit"></textarea>
-<button class="btn btn-green" onclick="kirimNotaWA()">📩 KIRIM TEKS KE WA</button>
-<div class="row"><button class="btn btn-blue" onclick="downloadNotaImage('png')">🖼️ DOWNLOAD PNG</button><button class="btn btn-dark" onclick="downloadNotaImage('jpeg')">🖼️ DOWNLOAD JPG</button></div>
-<button class="btn btn-gray" onclick="tutupNota()">Batal</button>
-</div></div>
-
-<footer class="main-footer">
-<b>🚬 CIGAR MART</b>
-<div class="tagline">Dapur tetap ngebul, mulut masih ngebul</div>
-<div class="copy">© 2026 Bagja Eka Aprianto<br>_Hak Dilindungi_</div>
-</footer>
-
+<nav><button id="tabJual" class="active" onclick="showTab('jual')">JUAL</button><button id="tabBuku" onclick="showTab('buku')">PEMBUKUAN</button><button id="tabKasbon" onclick="showTab('kasbon')">KASBON</button><button id="tabStok" onclick="showTab('stok')">STOK</button><button id="tabSaldo" onclick="showTab('saldo')">SALDO</button></nav>
+<div id="page-jual"><div class="card"><h3>🧾 Input Penjualan</h3><label>Tanggal</label><input type="date" id="tgl"><label>Nama Pembeli</label><input id="nama" placeholder="Budi / Umum"><label>Produk</label><select id="produk"></select><label>Harga / Bungkus</label><input type="number" id="harga"><div class="row"><div><label>Jumlah</label><input type="number" id="qty" value="1" min="1"></div><div><label>Metode</label><select id="bayar"><option>Tunai</option><option>Kasbon</option><option>Transfer</option></select></div></div><label>Catatan</label><input id="catatan"><div class="card" style="background:#f9f9f9"><b>Total: <span id="previewTotal">Rp 0</span></b> • <span id="previewUntung"></span></div><button class="btn btn-dark" id="btnSimpan" onclick="simpan()">💾 SIMPAN PENJUALAN</button><button class="btn btn-gray hidden" id="btnBatalEdit" onclick="batalEdit()">Batal Edit</button></div>
+<div class="card" style="background:#111;color:#fff"><h3 style="color:#f5c518">📊 TOTAL SEMUA PENJUALAN</h3><div class="kpi"><div class="yellow"><small>Omset Semua</small><b id="kpiOmsetAll">Rp 0</b></div><div><small>Untung Semua</small><b id="kpiUntungAll">Rp 0</b></div><div><small>Transaksi</small><b id="kpiTrxAll">0</b></div><div><small>Bungkus</small><b id="kpiBungkusAll">0</b></div></div><p style="font-size:12px;color:#ccc">Hari Ini: <b id="kpiOmsetToday" style="color:#f5c518">Rp 0</b> • Kasbon Belum Lunas: <b id="kpiKasbonAll" style="color:#ff8a8a">Rp 0</b></p></div></div>
+<div id="page-buku" class="hidden"><div class="card"><h3>📚 Pembukuan</h3><div class="filter"><button id="fAll" class="active" onclick="setFilter('all')">Semua</button><button id="fToday" onclick="setFilter('today')">Hari Ini</button><input type="date" id="filterTgl" style="width:150px" onchange="setFilter('pick')"></div><div class="total-box" id="rekapFilter"></div><div id="listRiwayat"></div></div></div>
+<div id="page-kasbon" class="hidden"><div class="card"><h3>📒 Kasbon</h3><label>Cari Nama</label><input id="cariNama" placeholder="Ketik nama..." oninput="renderKasbon()"><select id="pilihNama" onchange="pilihNamaKasbon()"><option value="">-- Semua Nama --</option></select><div class="filter"><button id="btnKasbonBelum" class="active" onclick="setKasbonFilter('belum')">Belum Lunas</button><button id="btnKasbonLunas" onclick="setKasbonFilter('lunas')">Sudah Lunas</button><button id="btnKasbonSemua" onclick="setKasbonFilter('semua')">Semua</button></div><p style="font-size:12px;color:#777">Yang Lunas auto hilang dari sini. Tetap ada di Pembukuan & Saldo.</p><div class="total-box" id="totalKasbonNama"></div><div id="listKasbon"></div></div></div>
+<div id="page-stok" class="hidden"><div class="card"><h3>📦 Stok & Produk</h3><label>Nama Produk Baru</label><input id="newNama"><div class="row"><div><label>Harga Jual</label><input type="number" id="newHarga"></div><div><label>Modal</label><input type="number" id="newModal"></div></div><label>Stok Awal</label><input type="number" id="newStok"><button class="btn btn-yellow" onclick="tambahProduk()">+ TAMBAH PRODUK</button><div id="listStok"></div></div></div>
+<div id="page-saldo" class="hidden"><div class="card" style="border:2px solid #e74c3c"><h3>🔔 PINJAMAN BELUM DIBAYAR</h3><div id="listPinjaman"></div></div><div class="card" style="background:#111;color:#fff"><h3 style="color:#f5c518">💰 SALDO</h3><div class="kpi"><div class="yellow"><small>Cash</small><b id="saldoCash">Rp 0</b></div><div><small>QR</small><b id="saldoQR">Rp 0</b></div><div><small>Total Saldo</small><b id="saldoTotal">Rp 0</b></div><div><small>Kasbon Belum Lunas</small><b id="saldoKasbon">Rp 0</b></div></div></div>
+<div class="card"><h3>➕ Dana Masuk</h3><label>Tanggal</label><input type="date" id="dmTgl"><label>Jumlah</label><input type="number" id="dmJumlah"><label>Keterangan</label><select id="dmKet" onchange="cekPinjam()"><option>Uang modal</option><option>Pinjam dana dari...</option><option>Kelebihan</option></select><div id="boxPinjam" class="hidden"><label>Pinjam Dari Siapa?</label><input id="dmPinjamDari"></div><label>Metode</label><select id="dmMetode"><option>Cash</option><option>QR</option></select><label>Catatan</label><input id="dmCatatan"><button class="btn btn-green" onclick="simpanDanaMasuk()">💾 SIMPAN DANA MASUK</button></div>
+<div class="card"><h3>➖ Dana Keluar</h3><label>Tanggal</label><input type="date" id="dkTgl"><label>Jumlah</label><input type="number" id="dkJumlah"><label>Keterangan</label><select id="dkKet"><option>Belanja stock</option><option>Operasional</option><option>Lain lain</option><option>Komisi</option></select><label>Metode</label><select id="dkMetode"><option>Cash</option><option>QR</option></select><label>Catatan</label><input id="dkCatatan"><button class="btn btn-red" onclick="simpanDanaKeluar()">💾 SIMPAN DANA KELUAR</button></div>
+<div class="card"><h3>📋 Riwayat Dana</h3><div class="filter"><button id="btnDanaAll" class="active" onclick="filterDana('all')">Semua</button><button id="btnDanaMasuk" onclick="filterDana('masuk')">Masuk</button><button id="btnDanaKeluar" onclick="filterDana('keluar')">Keluar</button></div><div class="total-box" id="totalDanaBox"></div><div id="listDana"></div></div></div>
+<div id="modalNota" class="modal"><div class="modal-box"><h3 style="text-align:center;margin:0">✏️ Edit Nota</h3><p style="font-size:12px;color:#777;text-align:center">Preview CENTER di bawah. Edit di kotak bawah.</p><div id="notaPreview" style="border:2px dashed #f5c518;border-radius:10px;padding:14px;text-align:center;line-height:1.7;white-space:pre-wrap"></div><textarea id="notaEdit" oninput="updatePreviewNota()"></textarea><button class="btn btn-green" onclick="kirimNotaWA()">📩 KIRIM TEKS KE WA</button><div class="row"><button class="btn btn-blue" onclick="downloadNotaImage('png')">🖼️ PNG</button><button class="btn btn-dark" onclick="downloadNotaImage('jpeg')">🖼️ JPG</button></div><button class="btn btn-gray" onclick="tutupNota()">Batal</button></div></div>
+<footer class="main-footer"><b>🚬 CIGAR MART</b><div class="tagline">Dapur tetap ngebul, mulut masih ngebul</div><div class="copy">© 2026 Bagja Eka Aprianto<br>_Hak Dilindungi_</div></footer>
 <script>
-let sales = [];
-try{ sales = JSON.parse(localStorage.getItem('cm_sales')||'[]'); }catch(e){ sales=[]; }
-let products = [];
-try{ products = JSON.parse(localStorage.getItem('cm_products')||'[]'); }catch(e){ products=[]; }
-if(!Array.isArray(products) || products.length===0){
-  products=[
-    {nama:'Gudang Garam Filter',harga:26000,modal:22000,stok:50},
-    {nama:'Surya 12',harga:28000,modal:24000,stok:50},
-    {nama:'Djarum Super',harga:25000,modal:21000,stok:50},
-    {nama:'Sampoerna Mild',harga:33000,modal:29000,stok:30}
-  ];
-  localStorage.setItem('cm_products',JSON.stringify(products));
-}
-let dana = [];
-try{ dana = JSON.parse(localStorage.getItem('cm_dana')||'[]'); }catch(e){ dana=[]; }
-let editId=null;
-let filterMode='all';
-let filterDanaMode='all';
-function rp(n){return 'Rp '+(Number(n)||0).toLocaleString('id-ID')}
-function todayStr(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function saveSales(){localStorage.setItem('cm_sales',JSON.stringify(sales))}
-function saveProducts(){localStorage.setItem('cm_products',JSON.stringify(products))}
-function saveDana(){localStorage.setItem('cm_dana',JSON.stringify(dana))}
-function sisaKasbon(s){return Number(s.total||0)-Number(s.dibayar||0)}
-function $(id){return document.getElementById(id)}
-
-function showTab(t){
-  ['jual','buku','kasbon','stok','saldo'].forEach(function(x){ let el=$('page-'+x); if(el) el.classList.add('hidden'); });
-  let pg=$('page-'+t); if(pg) pg.classList.remove('hidden');
-  ['tabJual','tabBuku','tabKasbon','tabStok','tabSaldo'].forEach(function(x){ let el=$(x); if(el) el.classList.remove('active'); });
-  let tb={jual:'tabJual',buku:'tabBuku',kasbon:'tabKasbon',stok:'tabStok',saldo:'tabSaldo'}[t];
-  if(tb && $(tb)) $(tb).classList.add('active');
-  renderAll();
-}
-function renderProdukSelect(){
-  let sel=$('produk'); if(!sel) return; sel.innerHTML='';
-  products.forEach(function(p,i){ let o=document.createElement('option'); o.value=i; o.textContent=p.nama+' - '+rp(p.harga)+' (Stok '+p.stok+')'; sel.appendChild(o); });
-  updatePreview();
-}
-function updatePreview(){
-  let sel=$('produk'); if(!sel || sel.value==='') return;
-  let p=products[sel.value]; if(!p) return;
-  $('harga').value=p.harga;
-  let qty=Number($('qty').value||1);
-  $('previewTotal').textContent=rp(p.harga*qty);
-  $('previewUntung').textContent='Untung: '+rp((p.harga-p.modal)*qty);
-}
-function simpan(){
-  let tgl=$('tgl').value||todayStr();
-  let nama=($('nama').value||'Umum').trim()||'Umum';
-  let pi=$('produk').value; if(pi===''){alert('Pilih produk dulu');return}
-  let p=products[pi];
-  let harga=Number($('harga').value||p.harga);
-  let qty=Number($('qty').value||1);
-  let bayar=$('bayar').value;
-  let catatan=$('catatan').value||'';
-  let total=harga*qty; let untung=(harga-p.modal)*qty;
-  if(editId){
-    let s=sales.find(function(x){return x.id===editId});
-    if(s){s.tgl=tgl;s.nama=nama;s.produk=p.nama;s.harga=harga;s.qty=qty;s.total=total;s.untung=untung;s.bayar=bayar;s.catatan=catatan; if(bayar!=='Kasbon'){ s.lunas=true; } }
-    editId=null; $('btnSimpan').textContent='💾 SIMPAN PENJUALAN'; $('btnBatalEdit').classList.add('hidden');
-    alert('Berhasil di-UPDATE!');
-  } else {
-    sales.unshift({id:Date.now(),tgl:tgl,nama:nama,produk:p.nama,harga:harga,qty:qty,total:total,untung:untung,bayar:bayar,catatan:catatan,modal:p.modal,lunas:(bayar!=='Kasbon'),dibayar:0,riwayatBayar:[]});
-    p.stok=Math.max(0,p.stok-qty); saveProducts();
-  }
-  saveSales(); resetForm(); renderAll(); showTab('buku');
-}
-function resetForm(){ $('nama').value=''; $('qty').value=1; $('catatan').value=''; $('tgl').value=todayStr(); }
-function batalEdit(){ editId=null; $('btnSimpan').textContent='💾 SIMPAN PENJUALAN'; $('btnBatalEdit').classList.add('hidden'); resetForm(); }
-function editTransaksi(id){
-  let s=sales.find(function(x){return x.id===id}); if(!s) return;
-  editId=id; showTab('jual');
-  $('tgl').value=s.tgl; $('nama').value=s.nama;
-  let idx=products.findIndex(function(p){return p.nama===s.produk}); if(idx>=0) $('produk').value=idx;
-  $('harga').value=s.harga; $('qty').value=s.qty; $('bayar').value=s.bayar; $('catatan').value=s.catatan||'';
-  $('btnSimpan').textContent='✅ UPDATE TRANSAKSI'; $('btnBatalEdit').classList.remove('hidden');
-  window.scrollTo(0,0); updatePreview();
-}
-function hapusTransaksi(id){
-  if(!confirm('Hapus transaksi ini? Stok akan balik.')) return;
-  let s=sales.find(function(x){return x.id===id}); if(s){ let p=products.find(function(p){return p.nama===s.produk}); if(p) p.stok+=s.qty; saveProducts(); }
-  sales=sales.filter(function(x){return x.id!==id}); saveSales(); renderAll();
-}
-function notaWA(id){
-  let s=sales.find(function(x){return x.id===id}); if(!s) return;
-  let bayarTxt='';
-  if(s.bayar==='Kasbon'){ bayarTxt = s.lunas ? 'Kasbon (Lunas)' : 'Kasbon (Belum Lunas) - Sisa '+rp(sisaKasbon(s)); }
-  else if(s.bayar==='Transfer'){ bayarTxt='Transfer / QR'; }
-  else { bayarTxt='Tunai'; }
-  let txt='*CIGAR MART*\n';
-  txt+=s.tgl+' - '+s.nama+'\n';
-  txt+=s.produk+' x'+s.qty+' = '+rp(s.total)+'\n';
-  txt+='Bayar: '+bayarTxt+'\n\n';
-  txt+='_Terimakasih telah berbelanja_\n\n';
-  txt+='*Dapur tetap ngebul, mulut masih ngebul*';
-  $('notaEdit').value=txt;
-  $('modalNota').classList.add('open');
-}
-function tutupNota(){ $('modalNota').classList.remove('open'); }
-function kirimNotaWA(){ let txt=$('notaEdit').value; tutupNota(); window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank'); }
-function downloadNotaImage(format){
-  let txt=$('notaEdit').value||'';
-  let lines=txt.split('\n');
-  let W=720, lineH=52, padTop=60, padSide=40;
-  let H=padTop + lines.length*lineH + 100;
-  let c=document.createElement('canvas'); c.width=W; c.height=H;
-  let x=c.getContext('2d');
-  x.fillStyle='#ffffff'; x.fillRect(0,0,W,H);
-  x.fillStyle='#111111'; x.fillRect(0,0,W,10); x.fillRect(0,H-10,W,10);
-  let y=padTop;
-  lines.forEach(function(raw){
-    let line=raw.replace(/\*/g,'').replace(/_/g,'').trim();
-    if(line===''){ y+=lineH*0.4; return; }
-    x.textAlign='center';
-    let tx=W/2;
-    if(line==='CIGAR MART'){ x.font='bold 44px Arial'; x.fillStyle='#111111'; x.fillText('CIGAR MART',tx,y); }
-    else if(line.indexOf('Dapur tetap ngebul')>=0){ x.font='italic bold 26px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
-    else if(line.indexOf('Terimakasih')>=0){ x.font='italic 26px Arial'; x.fillStyle='#555555'; x.fillText(line,tx,y); }
-    else if(line.indexOf('Bayar:')>=0){ x.font='bold 30px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
-    else { x.font='28px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
-    y+=lineH;
-  });
-  x.strokeStyle='#f5c518'; x.lineWidth=3; x.beginPath(); x.moveTo(padSide,y+12); x.lineTo(W-padSide,y+12); x.stroke();
-  x.font='22px Arial'; x.textAlign='center'; x.fillStyle='#888888'; x.fillText('© 2026 Bagja Eka Aprianto - Hak Dilindungi',W/2,y+52);
-  let ext = format==='jpeg' ? 'jpg' : 'png';
-  let mime = format==='jpeg' ? 'image/jpeg' : 'image/png';
-  let a=document.createElement('a'); a.download='nota-cigar-mart-'+Date.now()+'.'+ext; a.href=c.toDataURL(mime,0.92); a.click();
-}
-function setFilter(m){ filterMode=m; $('fAll').classList.toggle('active',m==='all'); $('fToday').classList.toggle('active',m==='today'); renderBuku(); }
-function getFiltered(){
-  if(filterMode==='today') return sales.filter(function(s){return s.tgl===todayStr()});
-  if(filterMode==='pick'){ let d=$('filterTgl').value; return sales.filter(function(s){return s.tgl===d}); }
-  return sales;
-}
-function toggleDrop(el,ev){
-  if(ev) ev.stopPropagation();
-  let menu=el.parentElement.querySelector('.drop-menu');
-  let wasOpen=menu.classList.contains('open');
-  document.querySelectorAll('.drop-menu').forEach(function(m){m.classList.remove('open')});
-  if(!wasOpen) menu.classList.add('open');
-}
-document.addEventListener('click',function(e){ if(!e.target.closest('.modal-box')){ document.querySelectorAll('.drop-menu').forEach(function(m){m.classList.remove('open')}); } });
-function renderBuku(){
-  let list=getFiltered();
-  let omset=list.reduce(function(a,s){return a+s.total},0);
-  let untung=list.reduce(function(a,s){return a+s.untung},0);
-  let bungkus=list.reduce(function(a,s){return a+s.qty},0);
-  let kasbonBelum=list.filter(function(s){return s.bayar==='Kasbon'&&!s.lunas}).reduce(function(a,s){return a+sisaKasbon(s)},0);
-  $('rekapFilter').innerHTML='Omset: '+rp(omset)+' | Untung: '+rp(untung)+' | Transaksi: '+list.length+'x | Bungkus: '+bungkus+' | Kasbon Belum Lunas: '+rp(kasbonBelum);
-  let html=list.length===0?'<p style="color:#888">Belum ada penjualan di filter ini.</p>':'';
-  list.forEach(function(s){
-    let bayarBtn='';
-    if(s.bayar==='Kasbon' && !s.lunas){
-      bayarBtn='<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Bayar Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 Bayar QR (Lunas)</button><button onclick="bayarKasbonSebagian('+s.id+')">💸 Bayar Sebagian</button></div></div>';
-    }
-    html+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span></div><div class="mid"><b>'+rp(s.total)+'</b>'+(s.bayar==='Kasbon'?' • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s)):'')+' • Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</div><div class="mini-actions">'+bayarBtn+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>';
-  });
-  $('listRiwayat').innerHTML=html;
-}
-function pilihNamaKasbon(){ let v=$('pilihNama').value; $('cariNama').value=v; renderKasbon(); }
-function renderKasbon(){
-  let names=[...new Set(sales.filter(function(s){return s.bayar==='Kasbon'}).map(function(s){return s.nama}))].sort();
-  let sel=$('pilihNama'); let cur=sel.value;
-  sel.innerHTML='<option value="">-- Semua Nama --</option>';
-  names.forEach(function(n){ let o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
-  if(names.includes(cur)) sel.value=cur;
-  let q=($('cariNama').value||'').toLowerCase().trim();
-  let list=sales.filter(function(s){return s.bayar==='Kasbon'});
-  if(q) list=list.filter(function(s){return s.nama.toLowerCase().includes(q)});
-  let totalSemua=list.reduce(function(a,s){return a+s.total},0);
-  let belum=list.filter(function(s){return !s.lunas}).reduce(function(a,s){return a+sisaKasbon(s)},0);
-  let lunas=list.filter(function(s){return s.lunas}).reduce(function(a,s){return a+s.total},0);
-  $('totalKasbonNama').innerHTML=(q?('Nama: <b>'+q+'</b>'):'Semua Nama Kasbon')+'<br>Total Kasbon: '+rp(totalSemua)+'<br>Belum Lunas: <span style="color:#c00">'+rp(belum)+'</span> | Sudah Lunas: <span style="color:#27ae60">'+rp(lunas)+'</span><br>Jumlah Transaksi: '+list.length+'x';
-  let html=list.length===0?'<p style="color:#888">Tidak ada kasbon untuk nama ini.</p>':'';
-  list.forEach(function(s){
-    let rincian=(s.riwayatBayar&&s.riwayatBayar.length)?'<div class="sub" style="margin-top:3px"><b>RINCIAN:</b> '+s.riwayatBayar.map(function(r){return r.tgl+' - '+(r.metode==='Tunai'?'💵':'📱')+' '+rp(r.nominal)}).join(' • ')+'</div>':'';
-    let bayarBtn='';
-    if(!s.lunas){ bayarBtn='<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Bayar Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 Bayar QR (Lunas)</button><button onclick="bayarKasbonSebagian('+s.id+')">💸 Bayar Sebagian</button></div></div>'; }
-    html+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span></div><div class="mid"><b>Total: '+rp(s.total)+'</b> • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s))+'</div>'+rincian+'<div class="mini-actions">'+bayarBtn+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>';
-  });
-  $('listKasbon').innerHTML=html;
-}
-function tambahProduk(){
-  let n=$('newNama').value.trim(); if(!n){alert('Isi nama produk');return}
-  products.push({nama:n,harga:Number($('newHarga').value||0),modal:Number($('newModal').value||0),stok:Number($('newStok').value||0)});
-  saveProducts(); $('newNama').value=''; renderAll(); alert('Produk ditambah');
-}
-function renderStok(){
-  let html='';
-  products.forEach(function(p,i){ html+='<div class="item"><b>'+p.nama+'</b><br><small>Harga '+rp(p.harga)+' | Modal '+rp(p.modal)+' | Stok '+p.stok+'</small><div class="actions"><button style="background:#eee" onclick="tambahStok('+i+')">+ Stok 10</button><button style="background:#e74c3c;color:#fff" onclick="hapusProduk('+i+')">Hapus</button></div></div>'; });
-  $('listStok').innerHTML=html;
-}
-function tambahStok(i){ products[i].stok+=10; saveProducts(); renderAll(); }
-function hapusProduk(i){ if(confirm('Hapus produk ini?')){ products.splice(i,1); saveProducts(); renderAll(); } }
-function renderKPI(){
-  let omsetAll=sales.reduce(function(a,s){return a+s.total},0);
-  let untungAll=sales.reduce(function(a,s){return a+s.untung},0);
-  let bungkusAll=sales.reduce(function(a,s){return a+s.qty},0);
-  let omsetToday=sales.filter(function(s){return s.tgl===todayStr()}).reduce(function(a,s){return a+s.total},0);
-  let kasbonAll=sales.filter(function(s){return s.bayar==='Kasbon'&&!s.lunas}).reduce(function(a,s){return a+sisaKasbon(s)},0);
-  $('kpiOmsetAll').textContent=rp(omsetAll);
-  $('kpiUntungAll').textContent=rp(untungAll);
-  $('kpiTrxAll').textContent=sales.length;
-  $('kpiBungkusAll').textContent=bungkusAll;
-  $('kpiOmsetToday').textContent=rp(omsetToday);
-  $('kpiKasbonAll').textContent=rp(kasbonAll);
-}
-function cekPinjam(){ $('boxPinjam').classList.toggle('hidden', $('dmKet').value!=='Pinjam dana dari...'); }
-function simpanDanaMasuk(){
-  let j=Number($('dmJumlah').value||0); if(j<=0){alert('Isi jumlah dulu');return}
-  let ket=$('dmKet').value;
-  if(ket==='Pinjam dana dari...'){ let p=$('dmPinjamDari').value.trim(); ket='Pinjam dana dari '+p; }
-  dana.unshift({id:Date.now(),tipe:'masuk',tgl:$('dmTgl').value||todayStr(),jumlah:j,ket:ket,metode:$('dmMetode').value,catatan:$('dmCatatan').value||'',lunasPinjam:false});
-  saveDana(); $('dmJumlah').value=''; $('dmCatatan').value=''; renderAll(); alert('Dana Masuk tersimpan');
-}
-function simpanDanaKeluar(){
-  let j=Number($('dkJumlah').value||0); if(j<=0){alert('Isi jumlah dulu');return}
-  dana.unshift({id:Date.now(),tipe:'keluar',tgl:$('dkTgl').value||todayStr(),jumlah:j,ket:$('dkKet').value,metode:$('dkMetode').value,catatan:$('dkCatatan').value||''});
-  saveDana(); $('dkJumlah').value=''; $('dkCatatan').value=''; renderAll(); alert('Dana Keluar tersimpan');
-}
-function filterDana(m){ filterDanaMode=m; renderSaldo(); }
-function hapusDana(id){ if(confirm('Hapus data dana ini?')){ dana=dana.filter(function(x){return x.id!==id}); saveDana(); renderAll(); } }
-function tandaiPinjamanLunas(id){
-  let d=dana.find(function(x){return x.id===id}); if(!d) return;
-  if(confirm('Pinjaman "'+d.ket+'" sebesar '+rp(d.jumlah)+' sudah dibayar lunas?')){ d.lunasPinjam=true; saveDana(); renderAll(); }
-}
-function renderPinjaman(){
-  let el=$('listPinjaman'); if(!el) return;
-  let pinjam=dana.filter(function(d){return d.tipe==='masuk'&&d.ket.includes('Pinjam dana')&&!d.lunasPinjam});
-  let tot=pinjam.reduce(function(a,d){return a+d.jumlah},0);
-  if(pinjam.length===0){ el.innerHTML='<p style="color:#27ae60">✅ Aman, tidak ada pinjaman yang belum dibayar.</p>'; return; }
-  let html='<div class="total-box" style="background:#ffecec">Total Pinjaman Belum Dibayar: <b style="color:#c00">'+rp(tot)+'</b></div>';
-  pinjam.forEach(function(d){ html+='<div class="item"><b>⚠️ '+d.tgl+' - '+d.ket+'</b><br><small>Masuk ke: '+d.metode+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:#c00">'+rp(d.jumlah)+'</b><div class="actions"><button style="background:#27ae60;color:#fff" onclick="tandaiPinjamanLunas('+d.id+')">✅ Sudah Dibayar</button><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>'; });
-  el.innerHTML=html;
-}
-function renderSaldo(){
-  if($('dmTgl')) $('dmTgl').value=todayStr();
-  if($('dkTgl')) $('dkTgl').value=todayStr();
-  let tunaiJual=sales.filter(function(s){return s.bayar==='Tunai'}).reduce(function(a,s){return a+s.total},0);
-  let qrJual=sales.filter(function(s){return s.bayar==='Transfer'}).reduce(function(a,s){return a+s.total},0);
-  let kasbonTunai=0, kasbonQR=0;
-  sales.forEach(function(s){ if(s.riwayatBayar){ s.riwayatBayar.forEach(function(r){ if(r.metode==='Tunai') kasbonTunai+=Number(r.nominal||0); else kasbonQR+=Number(r.nominal||0); }); } });
-  tunaiJual+=kasbonTunai; qrJual+=kasbonQR;
-  let masukCash=dana.filter(function(d){return d.tipe==='masuk'&&d.metode==='Cash'}).reduce(function(a,d){return a+d.jumlah},0);
-  let masukQR=dana.filter(function(d){return d.tipe==='masuk'&&d.metode==='QR'}).reduce(function(a,d){return a+d.jumlah},0);
-  let keluarCash=dana.filter(function(d){return d.tipe==='keluar'&&d.metode==='Cash'}).reduce(function(a,d){return a+d.jumlah},0);
-  let keluarQR=dana.filter(function(d){return d.tipe==='keluar'&&d.metode==='QR'}).reduce(function(a,d){return a+d.jumlah},0);
-  let saldoCash=tunaiJual+masukCash-keluarCash;
-  let saldoQR=qrJual+masukQR-keluarQR;
-  let kasbonBelum=sales.filter(function(s){return s.bayar==='Kasbon'&&!s.lunas}).reduce(function(a,s){return a+sisaKasbon(s)},0);
-  $('saldoCash').textContent=rp(saldoCash);
-  $('saldoQR').textContent=rp(saldoQR);
-  $('saldoTotal').textContent=rp(saldoCash+saldoQR);
-  $('saldoKasbon').textContent=rp(kasbonBelum);
-  let list=dana; if(filterDanaMode!=='all') list=dana.filter(function(d){return d.tipe===filterDanaMode});
-  let totMasuk=dana.filter(function(d){return d.tipe==='masuk'}).reduce(function(a,d){return a+d.jumlah},0);
-  let totKeluar=dana.filter(function(d){return d.tipe==='keluar'}).reduce(function(a,d){return a+d.jumlah},0);
-  $('totalDanaBox').innerHTML='Total Masuk: <span style="color:#27ae60">'+rp(totMasuk)+'</span> | Total Keluar: <span style="color:#c00">'+rp(totKeluar)+'</span> | Sisa: '+rp(totMasuk-totKeluar);
-  let html=list.length===0?'<p style="color:#888">Belum ada dana masuk/keluar.</p>':'';
-  list.forEach(function(d){ html+='<div class="item"><b>'+d.tgl+' - '+(d.tipe==='masuk'?'⬆️ MASUK':'⬇️ KELUAR')+'</b> <span class="badge '+(d.tipe==='masuk'?'badge-lunas':'badge-belum')+'">'+d.metode+'</span><br><small>'+d.ket+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:'+(d.tipe==='masuk'?'#27ae60':'#c00')+'">'+(d.tipe==='masuk'?'+ ':'- ')+rp(d.jumlah)+'</b><div class="actions"><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>'; });
-  $('listDana').innerHTML=html;
-  $('btnDanaAll').classList.toggle('active',filterDanaMode==='all');
-  $('btnDanaMasuk').classList.toggle('active',filterDanaMode==='masuk');
-  $('btnDanaKeluar').classList.toggle('active',filterDanaMode==='keluar');
-  renderPinjaman();
-}
-function bayarKasbonPerItem(id, metode){
-  let s=sales.find(function(x){return x.id===id}); if(!s) return;
-  let sisa=sisaKasbon(s); if(sisa<=0){alert('Kasbon ini sudah lunas');return}
-  if(!confirm('Bayar LUNAS '+rp(sisa)+' untuk '+s.nama+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'?')) return;
-  if(!s.riwayatBayar) s.riwayatBayar=[];
-  s.riwayatBayar.push({tgl:todayStr(),nominal:sisa,metode:metode});
-  s.dibayar=(Number(s.dibayar||0))+sisa; s.lunas=true; saveSales();
-  alert('LUNAS! '+s.nama+' bayar '+rp(sisa)); renderAll();
-}
-function bayarKasbonSebagian(id){
-  let s=sales.find(function(x){return x.id===id}); if(!s) return;
-  let sisa=sisaKasbon(s); if(sisa<=0){alert('Kasbon ini sudah lunas');return}
-  let m=prompt('BAYAR SEBAGIAN - '+s.nama+'\nSisa: '+rp(sisa)+'\n\nKetik 1 = TUNAI\nKetik 2 = QR','1');
-  if(m!=='1' && m!=='2'){alert('Pilih 1 atau 2');return}
-  let metode=m==='1'?'Tunai':'Transfer';
-  let bayar=Number(prompt('Metode: '+metode+'\nSisa: '+rp(sisa)+'\nMau bayar berapa?',''));
-  if(!bayar||bayar<=0){alert('Jumlah salah');return}
-  if(bayar>sisa){alert('Kelebihan! Sisa cuma '+rp(sisa));return}
-  if(!s.riwayatBayar) s.riwayatBayar=[];
-  s.riwayatBayar.push({tgl:todayStr(),nominal:bayar,metode:metode});
-  s.dibayar=(Number(s.dibayar||0))+bayar;
-  if(s.dibayar>=s.total) s.lunas=true;
-  saveSales(); alert('Tercatat! Sisa tinggal '+rp(s.total-s.dibayar)); renderAll();
-}
-function renderAll(){ renderProdukSelect(); renderKPI(); renderBuku(); renderKasbon(); renderStok(); renderSaldo(); }
-$('tgl').value=todayStr(); $('filterTgl').value=todayStr();
-$('produk').addEventListener('change',updatePreview);
-$('qty').addEventListener('input',updatePreview);
-$('harga').addEventListener('input',function(){ let qty=Number($('qty').value||1); let h=Number($('harga').value||0); $('previewTotal').textContent=rp(h*qty); });
-renderAll();
-</script>
-</body>
-</html>
+let sales=[];try{sales=JSON.parse(localStorage.getItem('cm_sales')||'[]')}catch(e){sales=[]}
+let products=[];try{products=JSON.parse(localStorage.getItem('cm_products')||'[]')}catch(e){products=[]}
+if(!products.length){products=[{nama:'Gudang Garam Filter',harga:26000,modal:22000,stok:50},{nama:'Surya 12',harga:28000,modal:24000,stok:50},{nama:'Djarum Super',harga:25000,modal:21000,stok:50},{nama:'Sampoerna Mild',harga:33000,modal:29000,stok:30}];localStorage.setItem('cm_products',JSON.stringify(products))}
+let dana=[];try{dana=JSON.parse(localStorage.getItem('cm_dana')||'[]')}catch(e){dana=[]}
+let editId=null,filterMode='all',filterDanaMode='all',kasbonFilter='belum';
+function rp(n){return 'Rp '+(Number(n)||0).toLocaleString('id-ID')}function todayStr(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function saveSales(){localStorage.setItem('cm_sales',JSON.stringify(sales))}function saveProducts(){localStorage.setItem('cm_products',JSON.stringify(products))}function saveDana(){localStorage.setItem('cm_dana',JSON.stringify(dana))}
+function sisaKasbon(s){return Number(s.total||0)-Number(s.dibayar||0)}function $(id){return document.getElementById(id)}
+function showTab(t){['jual','buku','kasbon','stok','saldo'].forEach(x=>$('page-'+x).classList.add('hidden'));$('page-'+t).classList.remove('hidden');['tabJual','tabBuku','tabKasbon','tabStok','tabSaldo'].forEach(x=>$(x).classList.remove('active'));$('tab'+{jual:'Jual',buku:'Buku',kasbon:'Kasbon',stok:'Stok',saldo:'Saldo'}[t]).classList.add('active');renderAll()}
+function renderProdukSelect(){let s=$('produk');s.innerHTML='';products.forEach((p,i)=>{let o=document.createElement('option');o.value=i;o.textContent=p.nama+' - '+rp(p.harga)+' (Stok '+p.stok+')';s.appendChild(o)});updatePreview()}
+function updatePreview(){let s=$('produk');if(s.value==='')return;let p=products[s.value];$('harga').value=p.harga;let q=Number($('qty').value||1);$('previewTotal').textContent=rp(p.harga*q);$('previewUntung').textContent='Untung: '+rp((p.harga-p.modal)*q)}
+function simpan(){let tgl=$('tgl').value||todayStr();let nama=($('nama').value||'Umum').trim()||'Umum';let pi=$('produk').value;if(pi===''){alert('Pilih produk');return}let p=products[pi];let harga=Number($('harga').value||p.harga);let qty=Number($('qty').value||1);let bayar=$('bayar').value;let cat=$('catatan').value||'';let total=harga*qty,untung=(harga-p.modal)*qty;
+if(editId){let s=sales.find(x=>x.id===editId);if(s){s.tgl=tgl;s.nama=nama;s.produk=p.nama;s.harga=harga;s.qty=qty;s.total=total;s.untung=untung;s.bayar=bayar;s.catatan=cat;if(bayar!=='Kasbon')s.lunas=true}editId=null;$('btnSimpan').textContent='💾 SIMPAN PENJUALAN';$('btnBatalEdit').classList.add('hidden');alert('Berhasil UPDATE!')}else{sales.unshift({id:Date.now(),tgl,nama,produk:p.nama,harga,qty,total,untung,bayar,catatan:cat,modal:p.modal,lunas:bayar!=='Kasbon',dibayar:0,riwayatBayar:[]});p.stok=Math.max(0,p.stok-qty);saveProducts()}saveSales();resetForm();renderAll();showTab('buku')}
+function resetForm(){$('nama').value='';$('qty').value=1;$('catatan').value='';$('tgl').value=todayStr()}
+function batalEdit(){editId=null;$('btnSimpan').textContent='💾 SIMPAN PENJUALAN';$('btnBatalEdit').classList.add('hidden');resetForm()}
+function editTransaksi(id){let s=sales.find(x=>x.id===id);if(!s)return;editId=id;showTab('jual');$('tgl').value=s.tgl;$('nama').value=s.nama;let idx=products.findIndex(p=>p.nama===s.produk);if(idx>=0)$('produk').value=idx;$('harga').value=s.harga;$('qty').value=s.qty;$('bayar').value=s.bayar;$('catatan').value=s.catatan||'';$('btnSimpan').textContent='✅ UPDATE TRANSAKSI';$('btnBatalEdit').classList.remove('hidden');window.scrollTo(0,0);updatePreview()}
+function hapusTransaksi(id){if(!confirm('Hapus? Stok balik.'))return;let s=sales.find(x=>x.id===id);if(s){let p=products.find(p=>p.nama===s.produk);if(p)p.stok+=s.qty;saveProducts()}sales=sales.filter(x=>x.id!==id);saveSales();renderAll()}
+function updatePreviewNota(){$('notaPreview').textContent=($('notaEdit').value||'').replace(/\*/g,'').replace(/_/g,'')}
+function notaWA(id){let s=sales.find(x=>x.id===id);if(!s)return;let b=s.bayar==='Kasbon'?(s.lunas?'Kasbon (Lunas)':'Kasbon (Belum Lunas) - Sisa '+rp(sisaKasbon(s))):(s.bayar==='Transfer'?'Transfer / QR':'Tunai');let txt='*CIGAR MART*\n'+s.tgl+' - '+s.nama+'\n'+s.produk+' x'+s.qty+' = '+rp(s.total)+'\nBayar: '+b+'\n\n_Terimakasih telah berbelanja_\n\n*Dapur tetap ngebul, mulut masih ngebul*';$('notaEdit').value=txt;updatePreviewNota();$('modalNota').classList.add('open')}
+function tutupNota(){$('modalNota').classList.remove('open')}
+function kirimNotaWA(){let t=$('notaEdit').value;tutupNota();window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
+function downloadNotaImage(f){let lines=($('notaEdit').value||'').split('\n');let W=720,lh=52,top=60,side=40;let H=top+lines.length*lh+100;let c=document.createElement('canvas');c.width=W;c.height=H;let x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.fillRect(0,0,W,10);x.fillRect(0,H-10,W,10);let y=top;lines.forEach(raw=>{let line=raw.replace(/\*/g,'').replace(/_/g,'').trim();if(!line){y+=lh*0.4;return}x.textAlign='center';let tx=W/2;if(line==='CIGAR MART'){x.font='bold 44px Arial';x.fillStyle='#111';x.fillText('CIGAR MART',tx,y)}else if(line.includes('Dapur')){x.font='italic bold 26px Arial';x.fillStyle='#111';x.fillText(line,tx,y)}else if(line.includes('Terimakasih')){x.font='italic 26px Arial';x.fillStyle='#555';x.fillText(line,tx,y)}else if(line.includes('Bayar:')){x.font='bold 30px Arial';x.fillStyle='#111';x.fillText(line,tx,y)}else{x.font='28px Arial';x.fillStyle='#111';x.fillText(line,tx,y)}y+=lh});x.strokeStyle='#f5c518';x.lineWidth=3;x.beginPath();x.moveTo(side,y+12);x.lineTo(W-side,y+12);x.stroke();x.font='22px Arial';x.textAlign='center';x.fillStyle='#888';x.fillText('© 2026 Bagja Eka Aprianto - Hak Dilindungi',W/2,y+52);let a=document.createElement('a');a.download='nota-'+Date.now()+(f==='jpeg'?'.jpg':'.png');a.href=c.toDataURL(f==='jpeg'?'image/jpeg':'image/png',0.92);a.click()}
+function setFilter(m){filterMode=m;$('fAll').classList.toggle('active',m==='all');$('fToday').classList.toggle('active',m==='today');renderBuku()}
+function getFiltered(){if(filterMode==='today')return sales.filter(s=>s.tgl===todayStr());if(filterMode==='pick')return sales.filter(s=>s.tgl===$('filterTgl').value);return sales}
+function toggleDrop(el,ev){if(ev)ev.stopPropagation();let menu=el.parentElement.querySelector('.drop-menu');let was=menu.classList.contains('open');document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open'));if(!was)menu.classList.add('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.modal-box'))document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open'))});
+function renderBuku(){let list=getFiltered();let om=list.reduce((a,s)=>a+s.total,0),un=list.reduce((a,s)=>a+s.untung,0),bk=list.reduce((a,s)=>a+s.qty,0),kb=list.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);$('rekapFilter').innerHTML='Omset: '+rp(om)+' | Untung: '+rp(un)+' | Transaksi: '+list.length+'x | Bungkus: '+bk+' | Kasbon Belum Lunas: '+rp(kb);let h=list.length?'':'<p style="color:#888">Belum ada.</p>';list.forEach(s=>{let bayar='';if(s.bayar==='Kasbon'&&!s.lunas)bayar='<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 QR (Lunas)</button><button onclick="bayarKasbonSebagian('+s.id+')">💸 Sebagian</button></div></div>';h+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span></div><div class="mid"><b>'+rp(s.total)+'</b>'+(s.bayar==='Kasbon'?' • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s)):'')+' • Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</div><div class="mini-actions">'+bayar+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>'});$('listRiwayat').innerHTML=h}
+function setKasbonFilter(f){kasbonFilter=f;$('btnKasbonBelum').classList.toggle('active',f==='belum');$('btnKasbonLunas').classList.toggle('active',f==='lunas');$('btnKasbonSemua').classList.toggle('active',f==='semua');renderKasbon()}
+function pilihNamaKasbon(){$('cariNama').value=$('pilihNama').value;renderKasbon()}
+function renderKasbon(){let names=[...new Set(sales.filter(s=>s.bayar==='Kasbon').map(s=>s.nama))].sort();let sel=$('pilihNama'),cur=sel.value;sel.innerHTML='<option value="">-- Semua Nama --</option>';names.forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});if(names.includes(cur))sel.value=cur;let q=($('cariNama').value||'').toLowerCase().trim();let list=sales.filter(s=>s.bayar==='Kasbon');if(q)list=list.filter(s=>s.nama.toLowerCase().includes(q));if(kasbonFilter==='belum')list=list.filter(s=>!s.lunas);if(kasbonFilter==='lunas')list=list.filter(s=>s.lunas);let tot=list.reduce((a,s)=>a+s.total,0),belum=list.filter(s=>!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0),lunas=list.filter(s=>s.lunas).reduce((a,s)=>a+s.total,0);$('totalKasbonNama').innerHTML=(q?('Nama: <b>'+q+'</b>'):'Semua Kasbon')+' - Filter: <b>'+(kasbonFilter==='belum'?'Belum Lunas':kasbonFilter==='lunas'?'Sudah Lunas':'Semua')+'</b><br>Total: '+rp(tot)+' | Belum Lunas: <span style="color:#c00">'+rp(belum)+'</span> | Lunas: <span style="color:#27ae60">'+rp(lunas)+'</span> | Transaksi: '+list.length+'x';let h=list.length?'':'<p style="color:#888">✅ Bersih! Tidak ada kasbon belum lunas.</p>';list.forEach(s=>{let rincian=(s.riwayatBayar&&s.riwayatBayar.length)?'<div class="sub"><b>RINCIAN:</b> '+s.riwayatBayar.map(r=>r.tgl+' - '+(r.metode==='Tunai'?'💵':'📱')+' '+rp(r.nominal)).join(' • ')+'</div>':'';let bayar='';if(!s.lunas)bayar='<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 QR (Lunas)</button><button onclick="bayarKasbonSebagian('+s.id+')">💸 Sebagian</button></div></div>';h+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span></div><div class="mid"><b>Total: '+rp(s.total)+'</b> • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s))+'</div>'+rincian+'<div class="mini-actions">'+bayar+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>'});$('listKasbon').innerHTML=h}
+function tambahProduk(){let n=$('newNama').value.trim();if(!n){alert('Isi nama');return}products.push({nama:n,harga:Number($('newHarga').value||0),modal:Number($('newModal').value||0),stok:Number($('newStok').value||0)});saveProducts();$('newNama').value='';renderAll();alert('Produk ditambah')}
+function renderStok(){let h='';products.forEach((p,i)=>{h+='<div class="item"><b>'+p.nama+'</b><br><small>Harga '+rp(p.harga)+' | Modal '+rp(p.modal)+' | Stok '+p.stok+'</small><div class="actions"><button style="background:#eee" onclick="tambahStok('+i+')">+ Stok 10</button><button style="background:#e74c3c;color:#fff" onclick="hapusProduk('+i+')">Hapus</button></div></div>'});$('listStok').innerHTML=h}
+function tambahStok(i){products[i].stok+=10;saveProducts();renderAll()}function hapusProduk(i){if(confirm('Hapus produk?')){products.splice(i,1);saveProducts();renderAll()}}
+function renderKPI(){let om=sales.reduce((a,s)=>a+s.total,0),un=sales.reduce((a,s)=>a+s.untung,0),bk=sales.reduce((a,s)=>a+s.qty,0),ot=sales.filter(s=>s.tgl===todayStr()).reduce((a,s)=>a+s.total,0),kb=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);$('kpiOmsetAll').textContent=rp(om);$('kpiUntungAll').textContent=rp(un);$('kpiTrxAll').textContent=sales.length;$('kpiBungkusAll').textContent=bk;$('kpiOmsetToday').textContent=rp(ot);$('kpiKasbonAll').textContent=rp(kb)}
+function cekPinjam(){$('boxPinjam').classList.toggle('hidden',$('dmKet').value!=='Pinjam dana dari...')}
+function simpanDanaMasuk(){let j=Number($('dmJumlah').value||0);if(j<=0){alert('Isi jumlah');return}let ket=$('dmKet').value;if(ket==='Pinjam dana dari...')ket='Pinjam dana dari '+$('dmPinjamDari').value.trim();dana.unshift({id:Date.now(),tipe:'masuk',tgl:$('dmTgl').value||todayStr(),jumlah:j,ket,metode:$('dmMetode').value,catatan:$('dmCatatan').value||'',lunasPinjam:false});saveDana();$('dmJumlah').value='';$('dmCatatan').value='';renderAll();alert('Dana Masuk tersimpan')}
+function simpanDanaKeluar(){let j=Number($('dkJumlah').value||0);if(j<=0){alert('Isi jumlah');return}dana.unshift({id:Date.now(),tipe:'keluar',tgl:$('dkTgl').value||todayStr(),jumlah:j,ket:$('dkKet').value,metode:$('dkMetode').value,catatan:$('dkCatatan').value||''});saveDana();$('dkJumlah').value='';$('dkCatatan').value='';renderAll();alert('Dana Keluar tersimpan')}
+function filterDana(m){filterDanaMode=m;renderSaldo()}function hapusDana(id){if(confirm('Hapus dana?')){dana=dana.filter(x=>x.id!==id);saveDana();renderAll()}}
+function tandaiPinjamanLunas(id){let d=dana.find(x=>x.id===id);if(!d)return;if(confirm('Pinjaman "'+d.ket+'" '+rp(d.jumlah)+' sudah lunas?')){d.lunasPinjam=true;saveDana();renderAll()}}
+function renderPinjaman(){let el=$('listPinjaman');let pin=dana.filter(d=>d.tipe==='masuk'&&d.ket.includes('Pinjam dana')&&!d.lunasPinjam);let tot=pin.reduce((a,d)=>a+d.jumlah,0);if(!pin.length){el.innerHTML='<p style="color:#27ae60">✅ Aman, tidak ada pinjaman.</p>';return}let h='<div class="total-box" style="background:#ffecec">Total Pinjaman Belum Dibayar: <b style="color:#c00">'+rp(tot)+'</b></div>';pin.forEach(d=>{h+='<div class="item"><b>⚠️ '+d.tgl+' - '+d.ket+'</b><br><small>'+d.metode+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:#c00">'+rp(d.jumlah)+'</b><div class="actions"><button style="background:#27ae60;color:#fff" onclick="tandaiPinjamanLunas('+d.id+')">✅ Sudah Dibayar</button><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>'});el.innerHTML=h}
+function renderSaldo(){$('dmTgl').value=todayStr();$('dkTgl').value=todayStr();let tj=sales.filter(s=>s.bayar==='Tunai').reduce((a,s)=>a+s.total,0),qj=sales.filter(s=>s.bayar==='Transfer').reduce((a,s)=>a+s.total,0),kt=0,kq=0;sales.forEach(s=>{if(s.riwayatBayar)s.riwayatBayar.forEach(r=>{if(r.metode==='Tunai')kt+=Number(r.nominal||0);else kq+=Number(r.nominal||0)})});tj+=kt;qj+=kq;let mc=dana.filter(d=>d.tipe==='masuk'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0),mq=dana.filter(d=>d.tipe==='masuk'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0),kc=dana.filter(d=>d.tipe==='keluar'&&d.metode==='Cash').reduce((a,d)=>a+d.jumlah,0),kqq=dana.filter(d=>d.tipe==='keluar'&&d.metode==='QR').reduce((a,d)=>a+d.jumlah,0);let sc=tj+mc-kc,sq=qj+mq-kqq,kb=sales.filter(s=>s.bayar==='Kasbon'&&!s.lunas).reduce((a,s)=>a+sisaKasbon(s),0);$('saldoCash').textContent=rp(sc);$('saldoQR').textContent=rp(sq);$('saldoTotal').textContent=rp(sc+sq);$('saldoKasbon').textContent=rp(kb);let list=dana;if(filterDanaMode!=='all')list=dana.filter(d=>d.tipe===filterDanaMode);let tm=dana.filter(d=>d.tipe==='masuk').reduce((a,d)=>a+d.jumlah,0),tk=dana.filter(d=>d.tipe==='keluar').reduce((a,d)=>a+d.jumlah,0);$('totalDanaBox').innerHTML='Masuk: '+rp(tm)+' | Keluar: '+rp(tk)+' | Sisa: '+rp(tm-tk);let h=list.length?'':'<p style="color:#888">Belum ada dana.</p>';list.forEach(d=>{h+='<div class="item"><b>'+d.tgl+' - '+(d.tipe==='masuk'?'⬆️ MASUK':'⬇️ KELUAR')+'</b> <span class="badge '+(d.tipe==='masuk'?'badge-lunas':'badge-belum')+'">'+d.metode+'</span><br><small>'+d.ket+(d.catatan?' • '+d.catatan:'')+'</small><br><b style="color:'+(d.tipe==='masuk'?'#27ae60':'#c00')+'">'+(d.tipe==='masuk'?'+ ':'- ')+rp(d.jumlah)+'</b><div class="actions"><button style="background:#e74c3c;color:#fff" onclick="hapusDana('+d.id+')">🗑️ Hapus</button></div></div>'});$('listDana').innerHTML=h;$('btnDanaAll').classList.toggle('active',filterDanaMode==='all');$('btnDanaMasuk').classList.toggle('active',filterDanaMode==='masuk');$('btnDanaKeluar').classList.toggle('active',filterDanaMode==='keluar');renderPinjaman()}
+function bayarKasbonPerItem(id,metode){let s=sales.find(x=>x.id===id);if(!s)return;let sisa=sisaKasbon(s);if(sisa<=0){alert('Sudah lunas');return}if(!confirm('Bayar LUNAS '+rp(sisa)+' untuk '+s.nama+' via '+(metode==='Tunai'?'TUNAI':'QR')+'?'))return;if(!s.riwayatBayar)s.riwayatBayar=[];s.riwayatBayar.push({tgl:todayStr(),nominal:sisa,metode});s.dibayar=(Number(s.dibayar||0))+sisa;s.lunas=true;saveSales();alert('LUNAS! '+s.nama+' bayar '+rp(sisa));renderAll()}
+function bayarKasbonSebagian(id){let s=sales.find(x=>x.id===id);if(!s)return;let sisa=sisaKasbon(s);if(sisa<=0){alert('Sudah lunas');return}let m=prompt('BAYAR SEBAGIAN - '+s.nama+'\nSisa: '+rp(sisa)+'\nKetik 1=TUNAI 2=QR','1');if(m!=='1'&&m!=='2'){alert('Pilih 1/2');return}let metode=m==='1'?'Tunai':'Transfer';let b=Number(prompt('Mau bayar berapa? Sisa '+rp(sisa),''));if(!b||b<=0||b>sisa){alert('Jumlah salah');return}if(!s.riwayatBayar)s.riwayatBayar=[];s.riwayatBayar.push({tgl:todayStr(),nominal:b,metode});s.dibayar=(Number(s.dibayar||0))+b;if(s.dibayar>=s.total)s.lunas=true;saveSales();alert('Tercatat! Sisa '+rp(s.total-s.dibayar));renderAll()}
+function renderAll(){renderProdukSelect();renderKPI();renderBuku();renderKasbon();renderStok();renderSaldo()}
+$('tgl').value=todayStr();$('filterTgl').value=todayStr();$('produk').addEventListener('change',updatePreview);$('qty').addEventListener('input',updatePreview);$('harga').addEventListener('input',()=>{let q=Number($('qty').value||1),h=Number($('harga').value||0);$('previewTotal').textContent=rp(h*q)});renderAll();
+</script></body></html>
