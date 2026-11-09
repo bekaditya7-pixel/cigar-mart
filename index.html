@@ -64,7 +64,7 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;display:none;align-items:flex-end;justify-content:center}
 .modal.open{display:flex}
 .modal-box{background:#fff;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:16px;max-height:88vh;overflow:auto}
-.modal-box textarea{height:220px;font-size:14px;line-height:1.55;white-space:pre-wrap}
+.modal-box textarea{height:220px;font-size:14px;line-height:1.55;white-space:pre-wrap;text-align:center}
 .main-footer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#111;color:#fff;text-align:center;padding:10px 12px 12px;border-top:2px solid #f5c518}
 .main-footer b{font-size:13px;letter-spacing:1px}
 .main-footer .tagline{font-size:11px;color:#f5c518;margin:2px 0 4px;font-style:italic}
@@ -167,8 +167,8 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 
 <div id="modalNota" class="modal"><div class="modal-box">
-<h3 style="margin:0 0 6px">✏️ Edit Nota Sebelum Kirim</h3>
-<p style="font-size:12px;color:#777;margin:0 0 8px">Aa bisa edit bebas, lalu pilih kirim teks / download gambar.</p>
+<h3 style="margin:0 0 6px;text-align:center">✏️ Edit Nota Sebelum Kirim</h3>
+<p style="font-size:12px;color:#777;margin:0 0 8px;text-align:center">Nota sudah rata tengah. Aa bisa edit, lalu download PNG / JPG.</p>
 <textarea id="notaEdit"></textarea>
 <button class="btn btn-green" onclick="kirimNotaWA()">📩 KIRIM TEKS KE WA</button>
 <div class="row"><button class="btn btn-blue" onclick="downloadNotaImage('png')">🖼️ DOWNLOAD PNG</button><button class="btn btn-dark" onclick="downloadNotaImage('jpeg')">🖼️ DOWNLOAD JPG</button></div>
@@ -241,7 +241,7 @@ function simpan(){
   let total=harga*qty; let untung=(harga-p.modal)*qty;
   if(editId){
     let s=sales.find(function(x){return x.id===editId});
-    if(s){s.tgl=tgl;s.nama=nama;s.produk=p.nama;s.harga=harga;s.qty=qty;s.total=total;s.untung=untung;s.bayar=bayar;s.catatan=catatan; if(bayar==='Kasbon'){ } else { s.lunas=true; } }
+    if(s){s.tgl=tgl;s.nama=nama;s.produk=p.nama;s.harga=harga;s.qty=qty;s.total=total;s.untung=untung;s.bayar=bayar;s.catatan=catatan; if(bayar!=='Kasbon'){ s.lunas=true; } }
     editId=null; $('btnSimpan').textContent='💾 SIMPAN PENJUALAN'; $('btnBatalEdit').classList.add('hidden');
     alert('Berhasil di-UPDATE!');
   } else {
@@ -275,7 +275,7 @@ function notaWA(id){
   let txt='*CIGAR MART*\n';
   txt+=s.tgl+' - '+s.nama+'\n';
   txt+=s.produk+' x'+s.qty+' = '+rp(s.total)+'\n';
-  txt+=' Bayar: '+bayarTxt+'\n\n';
+  txt+='Bayar: '+bayarTxt+'\n\n';
   txt+='_Terimakasih telah berbelanja_\n\n';
   txt+='*Dapur tetap ngebul, mulut masih ngebul*';
   $('notaEdit').value=txt;
@@ -286,8 +286,8 @@ function kirimNotaWA(){ let txt=$('notaEdit').value; tutupNota(); window.open('h
 function downloadNotaImage(format){
   let txt=$('notaEdit').value||'';
   let lines=txt.split('\n');
-  let W=720, lineH=48, padTop=55, padSide=50;
-  let H=padTop + lines.length*lineH + 90;
+  let W=720, lineH=52, padTop=60, padSide=40;
+  let H=padTop + lines.length*lineH + 100;
   let c=document.createElement('canvas'); c.width=W; c.height=H;
   let x=c.getContext('2d');
   x.fillStyle='#ffffff'; x.fillRect(0,0,W,H);
@@ -296,17 +296,17 @@ function downloadNotaImage(format){
   lines.forEach(function(raw){
     let line=raw.replace(/\*/g,'').replace(/_/g,'').trim();
     if(line===''){ y+=lineH*0.4; return; }
-    x.textAlign = (line==='CIGAR MART' || line.indexOf('Dapur tetap ngebul')>=0 || line.indexOf('Terimakasih')>=0) ? 'center' : 'left';
-    let tx = x.textAlign==='center' ? W/2 : padSide;
-    if(line==='CIGAR MART'){ x.font='bold 42px Arial'; x.fillStyle='#111111'; x.fillText('CIGAR MART',tx,y); }
+    x.textAlign='center';
+    let tx=W/2;
+    if(line==='CIGAR MART'){ x.font='bold 44px Arial'; x.fillStyle='#111111'; x.fillText('CIGAR MART',tx,y); }
     else if(line.indexOf('Dapur tetap ngebul')>=0){ x.font='italic bold 26px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
     else if(line.indexOf('Terimakasih')>=0){ x.font='italic 26px Arial'; x.fillStyle='#555555'; x.fillText(line,tx,y); }
     else if(line.indexOf('Bayar:')>=0){ x.font='bold 30px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
     else { x.font='28px Arial'; x.fillStyle='#111111'; x.fillText(line,tx,y); }
     y+=lineH;
   });
-  x.strokeStyle='#f5c518'; x.lineWidth=3; x.beginPath(); x.moveTo(padSide,y+10); x.lineTo(W-padSide,y+10); x.stroke();
-  x.font='22px Arial'; x.textAlign='center'; x.fillStyle='#888888'; x.fillText('© 2026 Bagja Eka Aprianto - Hak Dilindungi',W/2,y+48);
+  x.strokeStyle='#f5c518'; x.lineWidth=3; x.beginPath(); x.moveTo(padSide,y+12); x.lineTo(W-padSide,y+12); x.stroke();
+  x.font='22px Arial'; x.textAlign='center'; x.fillStyle='#888888'; x.fillText('© 2026 Bagja Eka Aprianto - Hak Dilindungi',W/2,y+52);
   let ext = format==='jpeg' ? 'jpg' : 'png';
   let mime = format==='jpeg' ? 'image/jpeg' : 'image/png';
   let a=document.createElement('a'); a.download='nota-cigar-mart-'+Date.now()+'.'+ext; a.href=c.toDataURL(mime,0.92); a.click();
