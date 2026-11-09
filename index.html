@@ -45,6 +45,24 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 .badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:bold}
 .badge-lunas{background:#d4edda;color:#155724}
 .badge-belum{background:#f8d7da;color:#721c24}
+/* COMPACT + DROPDOWN BARU */
+.item-compact{border:1px solid #eee;border-radius:10px;padding:8px 10px;margin-top:8px;background:#fff}
+.item-compact .top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.item-compact .top b{font-size:13px;line-height:1.3}
+.item-compact .sub{font-size:12px;color:#777;margin-top:1px}
+.item-compact .mid{font-size:12.5px;margin-top:3px;line-height:1.35}
+.item-compact .mid b{font-size:13px}
+.drop{position:relative}
+.drop-btn{padding:7px 10px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;font-size:12px;white-space:nowrap}
+.btn-bayar{background:#111;color:#fff}
+.btn-dot{background:#eee;color:#111;padding:7px 11px;font-size:15px;line-height:1}
+.drop-menu{position:absolute;right:0;top:36px;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);min-width:160px;z-index:50;overflow:hidden;display:none}
+.drop-menu.open{display:block}
+.drop-menu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:11px 12px;font-size:13px;font-weight:bold;cursor:pointer;border-bottom:1px solid #f0f0f0}
+.drop-menu button:last-child{border-bottom:0}
+.drop-menu button:active{background:#f5f5f5}
+.drop-menu .danger{color:#e74c3c}
+.mini-actions{display:flex;gap:6px;margin-top:7px}
 </style>
 </head>
 <body>
@@ -102,7 +120,6 @@ input,select,textarea{width:100%;padding:10px;margin-top:4px;border:1px solid #d
 </div>
 
 <div id="page-kasbon" class="hidden">
-<button class="btn btn-green" onclick="bayarKasbonSebagianByNama()" style="margin-bottom:10px">💵 BAYAR SEBAGIAN KASBON (KLIK DI SINI)</button>
 <div class="card">
 <h3>📒 Kasbon - Filter Per Nama</h3>
 <label>Cari / Pilih Nama</label>
@@ -283,6 +300,15 @@ function getFiltered(){
   if(filterMode==='pick'){let d=document.getElementById('filterTgl').value; return sales.filter(s=>s.tgl===d);}
   return sales;
 }
+/* === DROPDOWN LOGIC BARU === */
+function toggleDrop(el, ev){
+  if(ev) ev.stopPropagation();
+  let menu = el.parentElement.querySelector('.drop-menu');
+  let wasOpen = menu.classList.contains('open');
+  document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open'));
+  if(!wasOpen) menu.classList.add('open');
+}
+document.addEventListener('click', ()=>{ document.querySelectorAll('.drop-menu').forEach(m=>m.classList.remove('open')); });
 function renderBuku(){
   let list=getFiltered();
   let omset=list.reduce((a,s)=>a+s.total,0);
@@ -292,11 +318,14 @@ function renderBuku(){
   document.getElementById('rekapFilter').innerHTML='Omset: '+rp(omset)+' | Untung: '+rp(untung)+' | Transaksi: '+list.length+'x | Bungkus: '+bungkus+' | Kasbon Belum Lunas: '+rp(kasbonBelum);
   let html=list.length===0?'<p style="color:#888">Belum ada penjualan di filter ini.</p>':'';
   list.forEach(s=>{
-    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b><br><small>'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</small><br><b>'+rp(s.total)+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span>'+(s.bayar==='Kasbon'?'<br><small>Sudah dibayar: '+rp(s.dibayar||0)+' | Sisa: '+rp(sisaKasbon(s))+'</small>':'')+'<br><small>Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</small><div class="actions"><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#eee" onclick="notaWA('+s.id+')">Nota WA</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button>'+(s.bayar==='Kasbon'&&!s.lunas?'<button style="background:#111;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 BAYAR TUNAI</button><button style="background:#0088ff;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 BAYAR QR</button><button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">Tandai Lunas</button>':'')+'</div></div>';
+    let bayarBtn = '';
+    if(s.bayar==='Kasbon' && !s.lunas){
+      bayarBtn = '<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Bayar Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 Bayar QR (Lunas)</button></div></div>';
+    }
+    html+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+' @ '+rp(s.harga)+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+s.bayar+(s.bayar==='Kasbon'?(s.lunas?' - LUNAS':' - BELUM LUNAS'):'')+'</span></div><div class="mid"><b>'+rp(s.total)+'</b>'+(s.bayar==='Kasbon'?' • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s)):'')+' • Untung '+rp(s.untung)+(s.catatan?' • '+s.catatan:'')+'</div><div class="mini-actions">'+bayarBtn+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>';
   });
   document.getElementById('listRiwayat').innerHTML=html;
 }
-function toggleLunas(id){let s=sales.find(x=>x.id===id); if(s){s.lunas=!s.lunas; if(s.lunas) s.dibayar=s.total; saveSales(); renderAll();}}
 function pilihNamaKasbon(){
   let v=document.getElementById('pilihNama').value;
   document.getElementById('cariNama').value=v;
@@ -319,8 +348,12 @@ function renderKasbon(){
   document.getElementById('totalKasbonNama').innerHTML=namaTampil+'<br>Total Kasbon: '+rp(totalSemua)+'<br>Belum Lunas: <span style="color:#c00">'+rp(belum)+'</span> | Sudah Lunas: <span style="color:#27ae60">'+rp(lunas)+'</span><br>Jumlah Transaksi: '+list.length+'x';
   let html=list.length===0?'<p style="color:#888">Tidak ada kasbon untuk nama ini.</p>':'';
   list.forEach(s=>{
-    let rincian=(s.riwayatBayar&&s.riwayatBayar.length)?'<br><small style="color:#555"><b>RINCIAN BAYAR:</b><br>'+s.riwayatBayar.map(r=>r.tgl+' - '+(r.metode==='Tunai'?'💵 TUNAI':'📱 QR')+' - '+rp(r.nominal)).join('<br>')+'</small>':'';
-    html+='<div class="item"><b>'+s.tgl+' - '+s.nama+'</b> <span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span><br><small>'+s.produk+' x'+s.qty+'</small><br><b>Total: '+rp(s.total)+' | Sudah dibayar: '+rp(s.dibayar||0)+' | Sisa: '+rp(sisaKasbon(s))+'</b>'+rincian+'<div class="actions">'+(s.lunas?'':'<button style="background:#111;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 BAYAR TUNAI</button><button style="background:#0088ff;color:#fff" onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 BAYAR QR</button>')+'<button style="background:#27ae60;color:#fff" onclick="toggleLunas('+s.id+')">'+(s.lunas?'Batal Lunas':'Tandai Lunas')+'</button><button style="background:#f5c518" onclick="editTransaksi('+s.id+')">✏️ Edit</button><button style="background:#e74c3c;color:#fff" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div>';
+    let rincian=(s.riwayatBayar&&s.riwayatBayar.length)?'<div class="sub" style="margin-top:3px"><b>RINCIAN:</b> '+s.riwayatBayar.map(r=>r.tgl+' - '+(r.metode==='Tunai'?'💵':'📱')+' '+rp(r.nominal)).join(' • ')+'</div>':'';
+    let bayarBtn='';
+    if(!s.lunas){
+      bayarBtn='<div class="drop"><button class="drop-btn btn-bayar" onclick="toggleDrop(this,event)">💵 Bayar ▾</button><div class="drop-menu"><button onclick="bayarKasbonPerItem('+s.id+',\'Tunai\')">💵 Bayar Tunai (Lunas)</button><button onclick="bayarKasbonPerItem('+s.id+',\'Transfer\')">📱 Bayar QR (Lunas)</button><button onclick="bayarKasbonSebagian('+s.id+')">💸 Bayar Sebagian</button></div></div>';
+    }
+    html+='<div class="item-compact"><div class="top"><div><b>'+s.tgl+' - '+s.nama+'</b><div class="sub">'+s.produk+' x'+s.qty+'</div></div><span class="badge '+(s.lunas?'badge-lunas':'badge-belum')+'">'+(s.lunas?'LUNAS':'BELUM LUNAS')+'</span></div><div class="mid"><b>Total: '+rp(s.total)+'</b> • Sudah: '+rp(s.dibayar||0)+' • Sisa: '+rp(sisaKasbon(s))+'</div>'+rincian+'<div class="mini-actions">'+bayarBtn+'<div class="drop" style="margin-left:auto"><button class="drop-btn btn-dot" onclick="toggleDrop(this,event)">⋮</button><div class="drop-menu"><button onclick="editTransaksi('+s.id+')">✏️ Edit</button><button onclick="notaWA('+s.id+')">📩 Nota WA</button><button class="danger" onclick="hapusTransaksi('+s.id+')">🗑️ Hapus</button></div></div></div></div>';
   });
   document.getElementById('listKasbon').innerHTML=html;
 }
@@ -409,35 +442,36 @@ showTab=function(t){
   let tb={jual:'tabJual',buku:'tabBuku',kasbon:'tabKasbon',stok:'tabStok',saldo:'tabSaldo'}[t]; if(tb) document.getElementById(tb).classList.add('active');
   renderAll();
 };
-function bayarKasbonSebagianByNama(){
-  let nama=prompt('Nama yang mau bayar sebagian siapa?\nContoh: Sujai');
-  if(!nama) return;
-  let list=sales.filter(x=>x.bayar==='Kasbon'&&!x.lunas && x.nama.toLowerCase().includes(nama.toLowerCase()));
-  if(list.length===0){alert('Gak ketemu kasbon '+nama);return}
-  let pilih=list[0];
-  if(list.length>1){
-    let teks=list.map((x,i)=>(i+1)+'. '+x.tgl+' - '+x.nama+' - Sisa '+rp(sisaKasbon(x))).join('\n');
-    let no=Number(prompt('Pilih nomornya:\n'+teks,'1'));
-    if(!no) return;
-    pilih=list[no-1];
-  }
-  let m=prompt('Bayar pakai apa?\nKetik 1 = 💵 TUNAI\nKetik 2 = 📱 QR / TRANSFER','1');
-  if(m!=='1' && m!=='2'){alert('Pilih 1 untuk Tunai atau 2 untuk QR');return}
-  bayarKasbonPerItem(pilih.id, m==='1'?'Tunai':'Transfer');
-}
+/* === BAYAR BARU: LUNAS OTOMATIS + SALDO OTOMATIS === */
 function bayarKasbonPerItem(id, metode){
   let s=sales.find(x=>x.id===id); if(!s) return;
   let sisa=sisaKasbon(s);
   if(sisa<=0){alert('Kasbon ini sudah lunas');return}
-  let bayar=Number(prompt('Kasbon '+s.nama+'\nTotal: '+rp(s.total)+'\nSisa: '+rp(sisa)+'\n\nBayar via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nMau bayar berapa sekarang?',''));
+  if(!confirm('Bayar LUNAS '+rp(sisa)+' untuk '+s.nama+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'?\nSaldo '+(metode==='Tunai'?'Cash':'QR')+' akan otomatis nambah.')) return;
+  if(!s.riwayatBayar) s.riwayatBayar=[];
+  s.riwayatBayar.push({tgl:todayStr(), nominal:sisa, metode:metode});
+  s.dibayar=(Number(s.dibayar||0))+sisa;
+  s.lunas=true;
+  saveSales();
+  alert('LUNAS! '+s.nama+' bayar '+rp(sisa)+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nSaldo otomatis masuk.');
+  renderAll();
+}
+function bayarKasbonSebagian(id){
+  let s=sales.find(x=>x.id===id); if(!s) return;
+  let sisa=sisaKasbon(s);
+  if(sisa<=0){alert('Kasbon ini sudah lunas');return}
+  let bayar=Number(prompt('Kasbon '+s.nama+'\nTotal: '+rp(s.total)+'\nSisa: '+rp(sisa)+'\n\nMau bayar SEBAGIAN berapa sekarang?',''));
   if(!bayar||bayar<=0){alert('Jumlah salah');return}
   if(bayar>sisa){alert('Kelebihan! Sisa cuma '+rp(sisa));return}
+  let m=prompt('Bayar pakai apa?\nKetik 1 = 💵 TUNAI\nKetik 2 = 📱 QR / TRANSFER','1');
+  if(m!=='1' && m!=='2'){alert('Pilih 1 untuk Tunai atau 2 untuk QR');return}
+  let metode = m==='1'?'Tunai':'Transfer';
   if(!s.riwayatBayar) s.riwayatBayar=[];
   s.riwayatBayar.push({tgl:todayStr(), nominal:bayar, metode:metode});
   s.dibayar=(Number(s.dibayar||0))+bayar;
   if(s.dibayar>=s.total){ s.lunas=true; }
   saveSales();
-  alert('Tercatat! '+s.nama+' bayar '+rp(bayar)+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nSisa tinggal '+rp(s.total-s.dibayar)+'\nSaldo '+(metode==='Tunai'?'Cash':'QR')+' otomatis nambah.');
+  alert('Tercatat! '+s.nama+' bayar sebagian '+rp(bayar)+' via '+(metode==='Tunai'?'💵 TUNAI':'📱 QR')+'\nSisa tinggal '+rp(s.total-s.dibayar)+'\nSaldo '+(metode==='Tunai'?'Cash':'QR')+' otomatis nambah.');
   renderAll();
 }
 renderAll();
